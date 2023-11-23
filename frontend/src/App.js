@@ -42,15 +42,16 @@ function MapA() {
 */
 
 
-  const position = {lat: 51, lng: 9};
-  const [data, setData] = useState([10,10]);
+  // const position = {lat: 51, lng: 9}; 
+  const [position, setPosition] = useState({lat: 51, lng: 9});
+    // const [data, setData] = useState(10); passes all data from from to map
+  const [data, setData] = useState({car: "",walk: "",bus: "",add1: 10,add2: 40,add3: "",add4: "",add5: ""});
+
   const childToParent = (childdata) => {
     setData(childdata);
     console.log(data);
   }
 
-
-  //const position2 = {late: 53, lng: 9};
 
 
 
@@ -66,15 +67,15 @@ function MapA() {
 
   //destinationRef = position
   //originRef = position2
-
+//{process.env.REACT_APP_API_KEY}
 
   return (
  
-    <APIProvider apiKey =  {process.env.REACT_APP_API_KEY}>
+    <APIProvider apiKey =  "AIzaSyCF_DLds_klTXOc8ot-lpUhqdDrHMQ1s_4">
       <div className="App">
         <header className="App-header">
           <h>NuCasa</h>
-          <button onClick ={findRoute}>testDirections</button>
+          <button onClick ={() =>findRoute(data)}>testDirections</button>
         </header>
       </div>
      
@@ -107,7 +108,7 @@ function MapA() {
    
     const position2 = new google.maps.LatLng(53.5, 9.8);
 
-
+    
     const directionsRenderer = useMapsLibrary('directionsRenderer');
     directionsRenderer.setMap(map);
     const request = dService.route({
@@ -123,17 +124,21 @@ function MapA() {
   }
 
 
-  async function findRoute() {
-    const position2 = new google.maps.LatLng(53.5, 9.8);
+  async function findRoute(data) {
+    // const position2 = new google.maps.LatLng(53.5, 9.8);
+    const position1 = new google.maps.LatLng(data.add1,data.add1);
+    const position2 = new google.maps.LatLng(data.add2,data.add2);
 
+    //UNSUCESSFUL: TRYING to manipulate visual of map based on positon, ideally this will be the optimal living location
+    // setPosition({lat: data.add1, lng: 9});
 
     const {DirectionsService} = await google.maps.importLibrary("routes")
    
-    const dService = new DirectionsService
+    const dService = new DirectionsService //added() here idk why it worked
    
     const result = await dService.route({
      
-      destination: position,
+      destination: position1,
       origin: position2,
       travelMode: 'DRIVING',
     })

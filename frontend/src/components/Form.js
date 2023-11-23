@@ -4,11 +4,11 @@ import '../App.css';
 //Worst case handle api with form and save ideal location locally! & pull it down from local storage 
 
 export default function Multiple({childToParent}){
-  const [formData, setFormData] = useState({car: "",walk: "",bus: "",add1: "",add2: "",add3: "",add4: "",add5: ""});
+  const [formData, setFormData] = useState({car: "",walk: "",bus: "",add1: 10,add2: 40,add3: "",add4: "",add5: ""});
 
 //   const data = "This is data from Child Component to the Parent Component."
 
-  const [data, setData] = useState([10,10]);
+  const [data, setData] = useState(formData);
 
 
   const handleChange = (event) => {
@@ -18,7 +18,7 @@ export default function Multiple({childToParent}){
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setData([formData.car,formData.walk]);
+    setData(formData);
     alert(`Car: ${formData.car}, Walk: ${formData.walk}, bus: ${formData.bus},add1: ${formData.add1}, add2: ${formData.add2}, add3: ${formData.add3}`
     );
 };
@@ -41,6 +41,9 @@ return (
 
       <label htmlFor="address1">Address:</label>
       <textarea id="add1"  placeholder="123 Main Street.."  name="add1" value={formData.add1} onChange={handleChange}/>
+
+      <label htmlFor="address2">Address:</label>
+      <textarea id="add2"  placeholder="123 Main Street.."  name="add2" value={formData.add2} onChange={handleChange}/>
       </div>
 
       <button className="goBtn" type="submit">Go!</button>
