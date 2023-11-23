@@ -1,65 +1,152 @@
 "use client";
 
-//import logo from './logo.svg';
-//import './App.css';
 
-import {useRef, useState} from "react";
+import React, {useRef, useState} from "react";
+//import * as React from 'react';
+
 
 import {
   APIProvider,
   useDirectionService,
+  useApiIsLoaded,
   Map,
   AdvancedMarker,
+useMapsLibrary,
   Pin,
   InfoWindow,
   AutocompleteProps,
-  DirectionsRenderer,
 } from "@vis.gl/react-google-maps"
 
 
+import Multiple from "./components/Form.js";
+
+
+const google = window.google
+
+
 export default function App() {
+   
+  /*
+  const isLoaded  = useApiIsLoaded({
+    googleMapsApiKey: process.env.REACT_APP_API_KEY,
+    libraries: ["places"],
+  });
 
-  const position = {lat: 53.54, lng: 10};
 
-  //feel free to get rid of as much of this implementation as necessary, it wasn't working out because google.map.DirectionService() was not working.
-  //"google" was undefined. Not sure if this is because immediately above it, there was no API importing thing, whereas later on when "Map" is used,
-  //it is wrapped in <APIProvider></APIProvider
+  if (!isLoaded) return <div>Loading...</div>;
+  return <MapA />;
+}
+
+
+function MapA() {
+*/
+
+
+  const position = {lat: 51, lng: 9};
+  const [data, setData] = useState([10,10]);
+  const childToParent = (childdata) => {
+    setData(childdata);
+    console.log(data);
+  }
+
+
+  //const position2 = {late: 53, lng: 9};
+
+
+
 
   const [map, setMap] = useState((null))
-  const [directionsResponse, setDirectionsResponse] = useState(null)
+  const [dResponse, setDResponse] = useState(null)
   const [travelTime, setTravelTime] = useState('')
   const [distance, setDistance] = useState('')
   const destinationRef = useRef()
   const originRef = useRef()
   const travelMethodRef = useRef()
 
-  async function findRoute() {
-    if (destinationRef.current.value == '' || originRef.current.value == '') {
-      return;
-    } 
 
-    //const dService = new google.map.DirectionService()
-    /*
-    const results = await dService.route({
-      travelMode: travelMethodRef.current.value,
-      destination: destinationRef.current.value,
-      origin: originRef.current.value,
-    })
-    */
-  }
+  //destinationRef = position
+  //originRef = position2
+
 
   return (
-    <APIProvider apiKey = {process.env.GOOGLE_MAPS_API_KEY}>
+ 
+    <APIProvider apiKey =  {process.env.REACT_APP_API_KEY}>
       <div className="App">
         <header className="App-header">
           <h>NuCasa</h>
+          <button onClick ={findRoute}>testDirections</button>
         </header>
       </div>
-      
-      <div style = {{height: "97vh"}}>
-        <Map zoom = {9} center = {position}></Map>
+     
+      <div class="split left-panel ">
+        <Multiple childToParent={childToParent}/>
+          <p>{childToParent}</p>
+          <button primary onClick={() => childToParent(data)}>Click Child</button>
+      </div>
+
+
+      <div class="split right-panel " style = {{height: "97vh"} }>
+        <Map zoom = {9} center = {position} onLoad={map => setMap(map)}>
+        </Map>
       </div>
     </APIProvider>
   );
+//onLoad={map => setMap(map)}
+
+
+
+
+
+
+  function useDirectionsRenderer({dService}) {
+    const isLoaded  = useApiIsLoaded({
+      googleMapsApiKey: process.env.REACT_APP_API_KEY,
+      libraries: ["places"],
+    });
+ 
+   
+    const position2 = new google.maps.LatLng(53.5, 9.8);
+
+
+    const directionsRenderer = useMapsLibrary('directionsRenderer');
+    directionsRenderer.setMap(map);
+    const request = dService.route({
+      travelMode: 'DRIVING',
+      destination: position,
+      origin: position2,
+    })
+    dService.route(request, function(result, status) {
+      if (status == 'OK') {
+        directionsRenderer.setDirections(result);
+      }
+    });
+  }
+
+
+  async function findRoute() {
+    const position2 = new google.maps.LatLng(53.5, 9.8);
+
+
+    const {DirectionsService} = await google.maps.importLibrary("routes")
+   
+    const dService = new DirectionsService
+   
+    const result = await dService.route({
+     
+      destination: position,
+      origin: position2,
+      travelMode: 'DRIVING',
+    })
+
+
+    setDistance(result.routes[0].legs[0].distance.text)
+    setTravelTime(result.routes[0].legs[0].duration.text)
+    console.log(distance)
+    console.log(travelTime)
+   
+  }
+
+
 }
 
+window.App= App;
