@@ -45,7 +45,7 @@ function MapA() {
   // const position = {lat: 51, lng: 9}; 
   const [position, setPosition] = useState({lat: 51, lng: 9});
     // const [data, setData] = useState(10); passes all data from from to map
-  const [data, setData] = useState({car: "",walk: "",bus: "",add1: 10,add2: 40,add3: "",add4: "",add5: ""});
+  const [data, setData] = useState({car: "",walk: "",bus: "",add1: 10,add2: 40,add3: 29,add4: "",add5: ""});
 
   const childToParent = (childdata) => {
     setData(childdata);
@@ -71,7 +71,7 @@ function MapA() {
 
   return (
  
-    <APIProvider apiKey = {process.env.REACT_APP_API_KEY} >
+    <APIProvider apiKey = "AIzaSyCF_DLds_klTXOc8ot-lpUhqdDrHMQ1s_4" >
       <div className="App">
         <header className="App-header">
           <h>NuCasa</h>
@@ -124,10 +124,14 @@ function MapA() {
   }
 
 
+    async function findBestHome(data) {
+    }
+
   async function findRoute(data) {
     // const position2 = new google.maps.LatLng(53.5, 9.8);
     const position1 = new google.maps.LatLng(data.add1,data.add1);
     const position2 = new google.maps.LatLng(data.add2,data.add2);
+    const position3 = new google.maps.LatLng(data.add3,data.add3);
 
     //UNSUCESSFUL: TRYING to manipulate visual of map based on positon, ideally this will be the optimal living location
     // setPosition({lat: data.add1, lng: 9});
@@ -136,19 +140,21 @@ function MapA() {
    
     const dService = new DirectionsService //added() here idk why it worked
    
+    //here is when we need to do something with 3 addresses
+
     const result = await dService.route({
      
       destination: position1,
-      origin: position2,
+      origin: position3,
       travelMode: 'DRIVING',
     })
 
+    // findBestHome(data); 
 
     setDistance(result.routes[0].legs[0].distance.text)
     setTravelTime(result.routes[0].legs[0].duration.text)
     console.log(distance)
-    console.log(travelTime)
-   
+    console.log(travelTime) 
   }
 
 
