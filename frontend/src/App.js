@@ -141,8 +141,8 @@ function calculateStrength(xCo, yCo) {
 
   async function findRoute(xCo, yCo, xCo1, yCo1, method) {
     
-    //UNSUCCESSFUL: TRYING to manipulate visual of map based on positon, ideally this will be the optimal living location
-    setPosition({lat: 20, lng: 9});
+    setPosition({lat:xCo, lng:yCo}); //this will be moved to the strength calculation function when that is ready, this is just for testing
+    
 
     const {DirectionsService} = await google.maps.importLibrary("routes")
     const dService = new DirectionsService //added() here idk why it worked
