@@ -1,5 +1,6 @@
 "use client";
 import {createRoot} from 'react-dom/client';
+import './App.css';
 
 import React, {useRef, useState} from "react";
 //import * as React from 'react';
@@ -29,7 +30,7 @@ export default function App() {
   // const position = {lat: 51, lng: 9}; 
   const [position, setPosition] = useState({lat: 51, lng: 10});
     // const [data, setData] = useState(10); passes all data from from to map
-  const [data, setData] = useState({car: "",walk: "",bus: "",add1: 10,add2: 40,add3: 29,add4: "",add5: ""});
+  const [data, setData] = useState({car: "",walk: "",bus: "",coX: "",coY: "",coX1: "",coY1: "",coX2: "", coY2: ""});
 
   const childToParent = (childdata) => {
     setData(childdata);
@@ -46,6 +47,16 @@ export default function App() {
   const destinationRef = useRef()
   const originRef = useRef()
   const travelMethodRef = useRef()
+
+  const Place = function(xCo, yCo, freq) {
+    const xCo_ = xCo;
+    const yCo_ = yCo;
+    const freq_ = freq;
+    return { xCo_, yCo_, freq_ };
+  };
+
+  const PlaceOne = Place("3", "H");
+  
 
   //destinationRef = position
   //originRef = position2
@@ -78,15 +89,11 @@ export default function App() {
         </Map>
       </div>
     </APIProvider>
+    
   );
 //onLoad={map => setMap(map)}
 
-const Place = function(xCo, yCo, freq) {
-  const xCo_ = xCo;
-  const yCo_ = yCo;
-  const freq_ = freq;
-  return { xCo_, yCo_, freq_ };
-};
+
 
 function calculateStrength(xCo, yCo) {
   const totalScore = 0;

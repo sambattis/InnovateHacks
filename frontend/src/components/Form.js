@@ -4,7 +4,7 @@ import '../App.css';
 //Worst case handle api with form and save ideal location locally! & pull it down from local storage 
 
 export default function Multiple({childToParent}){
-  const [formData, setFormData] = useState({car: "",walk: "",bus: "",bike: "",add1: 10,add2: 40,add3: 29,add4: "",add5: ""});
+  const [formData, setFormData] = useState({car: "",walk: "",bus: "",bike: "",coX: "",coY: "",coX1: "",coY1: "",coX2: "", coY2: ""});
 
 //   const data = "This is data from Child Component to the Parent Component."
 
@@ -43,19 +43,23 @@ return (
       <label htmlFor="bus">Bus:</label>
       <input placeholder = "0-100" id="bus" type="number" name="bus" value={formData.bus} onChange={handleChange}/>
 
-      <label htmlFor="address1">Coord. 1.</label>
-      <textarea id="add1"  placeholder="123 Main Street.."  name="add1" value={formData.add1} onChange={handleChange}/>
+      <label htmlFor="coord1">Coords. 1</label>
+      <textarea id="coX"  placeholder="0"  name="coX" value={formData.coX} onChange={handleChange}/>
+      <textarea id="coY"  placeholder="0"  name="coY" value={formData.coY} onChange={handleChange}/>
 
-      <label htmlFor="address2">Coord. 2.</label>
-      <textarea id="add2"  placeholder="123 Main Street.."  name="add2" value={formData.add2} onChange={handleChange}/>
+      <label htmlFor="coord2">Coords. 2</label>
+      <textarea id="coX1"  placeholder="0"  name="coX1" value={formData.coX1} onChange={handleChange}/>
+      <textarea id="coY1"  placeholder="0"  name="coY1" value={formData.coY1} onChange={handleChange}/>
 
-      <label htmlFor="address3">Coord. 3.</label>
-      <textarea id="add3"  placeholder="123 Main Street.."  name="add3" value={formData.add3} onChange={handleChange}/>
+      <label htmlFor="coord3">Coords. 3</label>
+      <textarea id="coX2"  placeholder="0"  name="coX2" value={formData.coX2} onChange={handleChange}/>
+      <textarea id="coY2"  placeholder="0"  name="coY2" value={formData.coY2} onChange={handleChange}/>
       </div>
-      <button className="goBtn" type="submit">Go!</button>
+      <button className="button-4" type="submit">Go!</button>
       {/* <button primary onClick={() => childToParent(data)}>Click Child</button> */}
 
     </form>
     </div>
+
   );
 }
