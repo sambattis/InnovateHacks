@@ -80,7 +80,7 @@ export default function App() {
 
   return (
     
-    <APIProvider apiKey = {process.env.REACT_APP_API_KEY}    >
+    <APIProvider apiKey = {process.env.REACT_APP_API_KEY} >
 
       <div className="App">
         <header className="App-header">
@@ -113,10 +113,16 @@ export default function App() {
 
 function calculateStrength(xCo, yCo) {
   const totalScore = 0;
-  setDScore(findRoute(xCo, yCo, PlaceOne.xCo,PlaceOne.yCo, PlaceOne.freq) * drivingPref);
-  setBScore(findRoute(xCo, yCo, PlaceOne.xCo,PlaceOne.yCo, PlaceOne.freq) * bikePref);
-  setWScore(findRoute(xCo, yCo, PlaceOne.xCo,PlaceOne.yCo, PlaceOne.freq) * walkPref);
-  setTScore(findRoute(xCo, yCo, PlaceOne.xCo,PlaceOne.yCo, PlaceOne.freq) * transitPref);
+  console.log(PlaceOne.xCo_);
+  console.log(PlaceOne.yCo_);
+  let test1 = PlaceOne.xCo_;
+  let test2 = PlaceOne.yCo_;
+  findRoute(test1, test2, 49, 8, 'DRIVING');
+  /*
+  setDScore(findRoute(xCo, yCo, PlaceOne.xCo_,PlaceOne.yCo_, 'DRIVING') * drivingPref);
+  setBScore(findRoute(xCo, yCo, PlaceOne.xCo_,PlaceOne.yCo_, 'BICYCLING') * bikePref);
+  setWScore(findRoute(xCo, yCo, PlaceOne.xCo_,PlaceOne.yCo_, 'WALKING') * walkPref);
+  setTScore(findRoute(xCo, yCo, PlaceOne.xCo_,PlaceOne.yCo_, 'TRANSIT') * transitPref);*/
  
  //put each in a sorted data structure
  //take lowest option
@@ -160,6 +166,23 @@ function calculateStrength(xCo, yCo) {
             maxScore = testVal;
             setBestX(minX + it *(maxX-minX)/9);
             setBestY(minY + it1 * (maxY-minY)/9);
+          }
+          it1++;
+        }
+        it++;
+      }
+      let newMinX = bestX - (maxX-minX)/9;
+      let newMaxX = bestX + (maxX-minX)/9;
+      let newMinY = bestY - (maxY-minY)/9;
+      let newMaxY = bestY + (maxY-minY)/9;
+
+      while (it < 9) {
+        while (it1 < 9) {
+          let testVal = calculateStrength(newMinX + it *(newMaxX-newMinX)/9, newMinY + it1 * (newMaxY-newMinY)/9);
+          if (testVal > maxScore) {
+            maxScore = testVal;
+            setBestX(minX + it *(newMaxX-newMinX)/9);
+            setBestY(minY + it1 * (newMaxY-newMinY)/9);
           }
           it1++;
         }
@@ -234,6 +257,7 @@ function calculateStrength(xCo, yCo) {
 
       //findRoute(data.add1, data.add1, data.add2, data.add2, 'DRIVING');
       findBestHome();
+      setPosition(bestX, bestY);
     }
 
   async function findRoute(xCo, yCo, xCo1, yCo1, method) {
