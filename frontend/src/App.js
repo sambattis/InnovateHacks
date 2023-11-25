@@ -166,9 +166,11 @@ function calculateStrength(xCo, yCo) {
       setPlaceFour(Place(data.coX3, data.coY3, data.freq3));
       setPlaceFive(Place(data.coX4, data.coY4, data.freq4));
       console.log(PlaceOne);
-            //add each place to list and find min and maxes
-      if (PlaceOne.coX != "" && PlaceOne.coY != "" && PlaceOne.freq != "") {
-        console.log('reached');
+      console.log(PlaceOne.xCo_);
+      console.log(PlaceFive);
+      console.log(PlaceFive.xCo_);            //add each place to list and find min and maxes
+      if (PlaceOne.xCo_ != null && PlaceOne.yCo_ != null && PlaceOne.freq_ != null) {
+        console.log('reached One');
         if (list != null) {
           const newList = list.concat({PlaceOne});
           setList(newList);
@@ -176,10 +178,46 @@ function calculateStrength(xCo, yCo) {
           setList({PlaceOne})
         }
       }
-      /*if (PlaceTwo.coX != "" && PlaceTwo.coY != "" && PlaceTwo.freq != "") {
-        const newList = (list.concat({PlaceTwo}));
-        setList(newList);
-      }*/
+
+      if (PlaceTwo.xCo_ != null && PlaceTwo.yCo_ != null && PlaceOne.freq_ != null) {
+        console.log('reached Two');
+        if (list != null) {
+          const newList = list.concat({PlaceTwo});
+          setList(newList);
+        } else {
+          setList({PlaceTwo})
+        }
+      }
+      if (PlaceThree.xCo_ != null && PlaceThree.yCo_ != null && PlaceThree.freq_ != null) {
+        console.log('reached Three');
+        if (list != null) {
+          const newList = list.concat({PlaceThree});
+          setList(newList);
+        } else {
+          setList({PlaceThree})
+        }
+      }
+
+      if (PlaceFour.xCo_ != null && PlaceFour.yCo_ != null && PlaceFour.freq_ != null) {
+        console.log('reached Four');
+        if (list != null) {
+          const newList = list.concat({PlaceFour});
+          setList(newList);
+        } else {
+          setList({PlaceFour})
+        }
+      }
+
+      if (PlaceFive.xCo_ != null && PlaceFive.yCo_ != null && PlaceFive.freq_ != null) {
+        console.log('reached Five');
+        if (list != null) {
+          const newList = list.concat({PlaceFive});
+          setList(newList);
+        } else {
+          setList({PlaceFive})
+        }
+      }
+      
       console.log(list);
 
       //findRoute(data.add1, data.add1, data.add2, data.add2, 'DRIVING');
