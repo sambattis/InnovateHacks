@@ -75,9 +75,8 @@ export default function App() {
   const [maxX, setMaxX] = useState(null)
   const [maxY, setMaxY] = useState(null)
 
-  //destinationRef = position
-  //originRef = position2
-//{process.env.REACT_APP_API_KEY}
+  const [bestX, setBestX] = useState(0)
+  const [bestY, setBestY] = useState(0)
 
   return (
     
@@ -149,10 +148,23 @@ function calculateStrength(xCo, yCo) {
       }
     });
   }
-
-    async function findBestHome() {
-      //matrix stuff
-      //calculateStrength(place being tested)
+    
+    async function findBestHome(minX, maxX, minY, maxY) {
+      let maxScore = 0;
+      let it = 0;
+      let it1 = 0;
+      while (it < 9) {
+        while (it1 < 9) {
+          let testVal = calculateStrength(minX + it *(maxX-minX)/9, minY + it1 * (maxY-minY)/9);
+          if (testVal > maxScore) {
+            maxScore = testVal;
+            setBestX(minX + it *(maxX-minX)/9);
+            setBestY(minY + it1 * (maxY-minY)/9);
+          }
+          it1++;
+        }
+        it++;
+      }
     }
 
     async function findRouteHelper(data) {
@@ -168,7 +180,7 @@ function calculateStrength(xCo, yCo) {
       console.log(PlaceOne);
       console.log(PlaceOne.xCo_);
       console.log(PlaceFive);
-      console.log(PlaceFive.xCo_);            //add each place to list and find min and maxes
+      console.log(PlaceFive.xCo_)            //add each place to list and find min and maxes
       if (PlaceOne.xCo_ != null && PlaceOne.yCo_ != null && PlaceOne.freq_ != null) {
         console.log('reached One');
         if (list != null) {
