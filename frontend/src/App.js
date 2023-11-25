@@ -30,7 +30,8 @@ export default function App() {
   // const position = {lat: 51, lng: 9}; 
   const [position, setPosition] = useState({lat: 51, lng: 10});
     // const [data, setData] = useState(10); passes all data from from to map
-  const [data, setData] = useState({car: "",walk: "",bus: "",coX: "",coY: "",coX1: "",coY1: "",coX2: "", coY2: ""});
+    const [data, setData] = useState({car: "",walk: "",bus: "",coX: 10,coY: 10,coX1: 10,coY1: 10,coX2: 10, coY2: 10});
+  // const [data, setData] = useState({car: "",walk: "",bus: "",coX: "",coY: "",coX1: "",coY1: "",coX2: "", coY2: ""});
 
   const childToParent = (childdata) => {
     setData(childdata);
@@ -64,7 +65,7 @@ export default function App() {
 
   return (
     
-    <APIProvider apiKey = {process.env.REACT_APP_API_KEY}    >
+    <APIProvider apiKey = {process.env.REACT_APP_API_KEY}>
 
       <div className="App">
         <header className="App-header">
@@ -139,11 +140,16 @@ function calculateStrength(xCo, yCo) {
     async function findRouteHelper(data) {
       const position5 = new google.maps.LatLng(53.5, 9.8);
       const position4 = new google.maps.LatLng(53, 9);
-      const position1 = new google.maps.LatLng(data.add1,data.add1);
-      const position2 = new google.maps.LatLng(data.add2,data.add2);
-      const position3 = new google.maps.LatLng(data.add3,data.add3);
+      const position1 = new google.maps.LatLng(data.coX,data.coY);
+      const position2 = new google.maps.LatLng(data.coX1,data.coY1);
+      const position3 = new google.maps.LatLng(data.coX2,data.coY2);
       //findRoute(data.add1, data.add1, data.add2, data.add2, 'DRIVING');
-      findRoute(53.5, 9.8, 53,9, 'WALKING');
+      // findRoute(53.5, 9.8, 53,9, 'WALKING');
+      //can manipulate a pass on X 
+      // findRoute(parseFloat(data.coX), 9.8, 53,9, 'WALKING');
+      findRoute(parseFloat(data.coX), parseFloat(data.coY), parseFloat(data.coX1), parseFloat(data.coY1), 'WALKING');
+
+
     }
 
   async function findRoute(xCo, yCo, xCo1, yCo1, method) {
@@ -167,6 +173,9 @@ function calculateStrength(xCo, yCo) {
     setTravelTime(result.routes[0].legs[0].duration.text)
     console.log(distance)
     console.log(travelTime) 
+    alert(`These two places are  ${distance} far apart, and will take ${travelTime} of travel time.`);
+    //  alert(`Car: ${distance}, Walk: ${travelTime}, bus: ${formData.bus},add1: ${formData.add1}, add2: ${formData.add2}, add3: ${formData.add3}`
+    // );
   }
 }
 

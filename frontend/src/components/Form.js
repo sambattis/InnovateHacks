@@ -4,7 +4,8 @@ import '../App.css';
 //Worst case handle api with form and save ideal location locally! & pull it down from local storage 
 
 export default function Multiple({childToParent}){
-  const [formData, setFormData] = useState({car: "",walk: "",bus: "",bike: "",coX: "",coY: "",coX1: "",coY1: "",coX2: "", coY2: ""});
+  // const [formData, setFormData] = useState({car: "",walk: "",bus: "",bike: "",coX: "",coY: "",coX1: "",coY1: "",coX2: "", coY2: ""});
+  const [formData, setFormData] = useState({car: "",walk: "",bus: "",bike: "",coX: 11,coY: 11,coX1: 11,coY1: 11,coX2: 11, coY2: 11});
 
 //   const data = "This is data from Child Component to the Parent Component."
 
@@ -44,11 +45,11 @@ return (
       <input placeholder = "0-100" id="bus" type="number" name="bus" value={formData.bus} onChange={handleChange}/>
 
       <label htmlFor="coord1">Coords. 1</label>
-      <textarea id="coX"  placeholder="0"  name="coX" value={formData.coX} onChange={handleChange}/>
+      <input id="coX"  type="number" placeholder="0"  name="coX" value={formData.coX} onChange={handleChange}/>
       <textarea id="coY"  placeholder="0"  name="coY" value={formData.coY} onChange={handleChange}/>
 
       <label htmlFor="coord2">Coords. 2</label>
-      <textarea id="coX1"  placeholder="0"  name="coX1" value={formData.coX1} onChange={handleChange}/>
+      <input id="coX1"  placeholder="0"  name="coX1" value={formData.coX1} onChange={handleChange}/>
       <textarea id="coY1"  placeholder="0"  name="coY1" value={formData.coY1} onChange={handleChange}/>
 
       <label htmlFor="coord3">Coords. 3</label>
