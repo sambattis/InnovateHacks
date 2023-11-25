@@ -81,7 +81,7 @@ export default function App() {
 
   return (
     
-    <APIProvider apiKey =  "AIzaSyCF_DLds_klTXOc8ot-lpUhqdDrHMQ1s_4" >
+    <APIProvider apiKey = {process.env.REACT_APP_API_KEY} >
 
       <div className="App">
         <header className="App-header">

@@ -100,14 +100,13 @@ return (
       <label htmlFor="transit">Transit:</label>
       <input placeholder = "0-100" id="transit" type="number" name="transit" value={formData.transit} onChange={handleChange}/>
 
- {LatLng}
- <br/>
- {address}
 
       <label htmlFor="add1">Address Lookup</label>
+      Found Address:  {address}
       <textarea id="add1" placeholder="0"  name="add1" value={formData.add1} onChange={handleChange}/>
       <button className= "button-4" onClick ={() =>findLocation(data)}>Address Lookup</button>
-
+      Use found values for Coordinates! 
+ {LatLng}
       <label htmlFor="coord1">Coords. 1</label>
       <textarea id="coX"  placeholder="0"  name="coX" value={formData.coX} onChange={handleChange}/>
       <textarea id="coY"  placeholder="0"  name="coY" value={formData.coY} onChange={handleChange}/>
