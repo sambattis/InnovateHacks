@@ -1,10 +1,30 @@
 import { useState } from "react";
 import '../App.css';
 
+import {
+  APIProvider,
+  useDirectionService,
+  useApiIsLoaded,
+  useAutocomplete,
+  Marker,
+  Map,
+  AdvancedMarker,
+  useDirectionsRenderer,
+useMapsLibrary,
+  Pin,
+  InfoWindow,
+  AutocompleteProps,
+} from "@vis.gl/react-google-maps"
+
+const google = window.google
+
+
 //Worst case handle api with form and save ideal location locally! & pull it down from local storage 
 
 export default function Multiple({childToParent}){
   const [formData, setFormData] = useState({car: "",walk: "",transit: "",bike: "",coX: "",coY: "",coX1: "",coY1: "",coX2: "", coY2: ""});
+  const [LatLng, setLatLng] = useState();
+  const [address, setAddress] = useState();
 
 //   const data = "This is data from Child Component to the Parent Component."
 
@@ -20,9 +40,46 @@ export default function Multiple({childToParent}){
     event.preventDefault();
     setData(formData);
     childToParent(data);
-    // alert(`Car: ${formData.car}, Walk: ${formData.walk}, bus: ${formData.bus},add1: ${formData.add1}, add2: ${formData.add2}, add3: ${formData.add3}`
-    // );
 };
+
+async function findLocation(data) {
+  // let response = geocode({ address: "125 NW 10th St, Gainesville, FL 32601" });
+  let response = geocode({ address: data.add1 });
+}
+
+function geocode(request) {
+
+  let geocoder = new google.maps.Geocoder();
+  let response;
+    let responseDiv;
+
+
+  response = document.createElement("pre");
+response.id = "response";
+response.innerText = "";
+responseDiv = document.createElement("div");
+responseDiv.id = "response-container";
+responseDiv.appendChild(response);
+
+
+  // clear();
+  geocoder
+    .geocode(request)
+    .then((result) => {
+      const { results } = result;
+      //for address lookup
+      console.log("" + results[0].formatted_address);
+      setAddress(results[0].formatted_address);
+      setLatLng(JSON.stringify(results[0].geometry.location, null, 2));
+      responseDiv.style.display = "block";
+      console.log("latlng" + LatLng);
+      console.log("address" + address);
+      return results;
+    })
+    .catch((e) => {
+      alert("Geocode was not successful for the following reason: " + e);
+    });
+}
 return (
     <div className="form-box">
     {/* <h5 className="form-step">Where should I live?</h5> */}
@@ -42,6 +99,14 @@ return (
 
       <label htmlFor="transit">Transit:</label>
       <input placeholder = "0-100" id="transit" type="number" name="transit" value={formData.transit} onChange={handleChange}/>
+
+ {LatLng}
+ <br/>
+ {address}
+
+      <label htmlFor="add1">Address Lookup</label>
+      <textarea id="add1" placeholder="0"  name="add1" value={formData.add1} onChange={handleChange}/>
+      <button className= "button-4" onClick ={() =>findLocation(data)}>Address Lookup</button>
 
       <label htmlFor="coord1">Coords. 1</label>
       <textarea id="coX"  placeholder="0"  name="coX" value={formData.coX} onChange={handleChange}/>
@@ -69,6 +134,7 @@ return (
       <textarea id="freq4"  placeholder="0"  name="freq4" value={formData.freq4} onChange={handleChange}/>
       </div>
       <button className="button-4" type="submit">Go!</button>
+
       {/* <button primary onClick={() => childToParent(data)}>Click Child</button> */}
 
     </form>
