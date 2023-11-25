@@ -27,11 +27,8 @@ export default function App() {
 
   const [selected, setSelected] = useState(null);
 
-  // const position = {lat: 51, lng: 9}; 
   const [position, setPosition] = useState({lat: 51, lng: 10});
-    // const [data, setData] = useState(10); passes all data from from to map
-    const [data, setData] = useState({car: "",walk: "",bus: "",coX: 10,coY: 10,coX1: 10,coY1: 10,coX2: 10, coY2: 10});
-  // const [data, setData] = useState({car: "",walk: "",bus: "",coX: "",coY: "",coX1: "",coY1: "",coX2: "", coY2: ""});
+  const [data, setData] = useState({car: "",walk: "",bus: "",coX: 10,coY: 10,coX1: 10,coY1: 10,coX2: 10, coY2: 10});
 
   const childToParent = (childdata) => {
     setData(childdata);
@@ -61,7 +58,7 @@ export default function App() {
 
   //destinationRef = position
   //originRef = position2
-//{process.env.REACT_APP_API_KEY}
+//
 
   return (
     
@@ -148,15 +145,43 @@ function calculateStrength(xCo, yCo) {
       //can manipulate a pass on X 
       // findRoute(parseFloat(data.coX), 9.8, 53,9, 'WALKING');
       findRoute(parseFloat(data.coX), parseFloat(data.coY), parseFloat(data.coX1), parseFloat(data.coY1), 'WALKING');
-
-
     }
+
+      async function findLocation(address) {
+        const {DirectionsService} = await google.maps.importLibrary("places")
+        const dService = new DirectionsService //added() here idk why it worked
+        let geocoder = new google.maps.Geocoder();
+        const inputText = document.createElement("university of florida");
+        inputText.type = "text";
+        inputText.placeholder = "Enter a location";
+      
+        const submitButton = document.createElement("input");
+
+        submitButton.type = "button";
+        submitButton.value = "Geocode";
+        submitButton.classList.add("button", "button-primary");
+
+        const clearButton = document.createElement("input");
+
+  clearButton.type = "button";
+  clearButton.value = "Clear";
+  clearButton.classList.add("button", "button-secondary");
+  let response = document.createElement("pre");
+  response.id = "response";
+  let responseDiv;
+
+    response.innerText = "";
+    responseDiv = document.createElement("div");
+    responseDiv.id = "response-container";
+    responseDiv.appendChild(response);
+
+      }
+
 
   async function findRoute(xCo, yCo, xCo1, yCo1, method) {
     
     setPosition({lat:xCo, lng:yCo}); //this will be moved to the strength calculation function when that is ready, this is just for testing
     
-
     const {DirectionsService} = await google.maps.importLibrary("routes")
     const dService = new DirectionsService //added() here idk why it worked
 
@@ -173,9 +198,7 @@ function calculateStrength(xCo, yCo) {
     setTravelTime(result.routes[0].legs[0].duration.text)
     console.log(distance)
     console.log(travelTime) 
-    alert(`These two places are  ${distance} far apart, and will take ${travelTime} of travel time.`);
-    //  alert(`Car: ${distance}, Walk: ${travelTime}, bus: ${formData.bus},add1: ${formData.add1}, add2: ${formData.add2}, add3: ${formData.add3}`
-    // );
+    alert(`These two places are ${distance} far apart, and will take ${travelTime} to get there.`);
   }
 }
 
