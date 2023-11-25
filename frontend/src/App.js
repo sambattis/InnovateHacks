@@ -1,6 +1,7 @@
 "use client";
 import {createRoot} from 'react-dom/client';
 import './App.css';
+import { v4 as uuidv4 } from 'uuid';
 
 import React, {useRef, useState} from "react";
 //import * as React from 'react';
@@ -27,10 +28,10 @@ export default function App() {
 
   const [selected, setSelected] = useState(null);
 
+  // const position = {lat: 51, lng: 9}; 
   const [position, setPosition] = useState({lat: 51, lng: 10});
-  // const [data, setData] = useState({car: "",walk: "",bus: "",coX: 10,coY: 10,coX1: 10,coY1: 10,coX2: 10, coY2: 10});
-  const [data, setData] = useState({car: "",walk: "",bus: "",coX: 10,coY: 10,coX1: 10,coY1: 10,coX2: 10, coY2: 10, add1: "120 NW 10th St, Gainesville, FL 32601", add2: "",add3: ""});
-
+    // const [data, setData] = useState(10); passes all data from from to map
+  const [data, setData] = useState({car: "",walk: "",bus: "",coX: "",coY: "",coX1: "",coY1: "",coX2: "", coY2: ""});
 
   const childToParent = (childdata) => {
     setData(childdata);
@@ -44,6 +45,7 @@ export default function App() {
   const [drivingPref, setDrivingPref] = useState('')
   const [bikePref, setBikePref] = useState('')
   const [walkPref, setWalkPref] = useState('')
+  const [transitPref, setTransitPref] = useState('')
   const destinationRef = useRef()
   const originRef = useRef()
   const travelMethodRef = useRef()
@@ -55,23 +57,36 @@ export default function App() {
     return { xCo_, yCo_, freq_ };
   };
 
-  const PlaceOne = Place("3", "H");
-  
+  const [dScore, setDScore] = useState(null)
+  const [wScore, setWScore] = useState(null)
+  const [bScore, setBScore] = useState(null)
+  const [tScore, setTScore] = useState(null)
+
+  const [PlaceOne, setPlaceOne] = useState(null)
+  const [PlaceTwo, setPlaceTwo] = useState(null)
+  const [PlaceThree, setPlaceThree] = useState(null)
+  const [PlaceFour, setPlaceFour] = useState(null)
+  const [PlaceFive, setPlaceFive] = useState(null)
+
+  const [list, setList] = useState([])
+
+  const [minX, setMinX] = useState(null) //should this be 0 or something
+  const [minY, setMinY] = useState(null)
+  const [maxX, setMaxX] = useState(null)
+  const [maxY, setMaxY] = useState(null)
 
   //destinationRef = position
   //originRef = position2
-//// {process.env.GOOGLE_MAPS_API_KEY}
-
+//{process.env.REACT_APP_API_KEY}
 
   return (
     
-    <APIProvider apiKey = {process.env.GOOGLE_MAPS_API_KEY}>
+    <APIProvider apiKey = {process.env.REACT_APP_API_KEY}    >
 
       <div className="App">
         <header className="App-header">
           <h>NuCasa</h>
-          <button onClick ={() =>findLocation(data)}>testDirections</button>
-          {/* <button onClick ={() =>findRouteHelper(data)}>testDirections</button> */}
+          <button className= "button-4" onClick ={() =>findRouteHelper(data)}>testDirections</button>
         </header>
       </div>
      
@@ -99,9 +114,11 @@ export default function App() {
 
 function calculateStrength(xCo, yCo) {
   const totalScore = 0;
- //findRoute(xCo, yCo, xCo1, yCo1, car) * carPref
- //findRoute(xCo, yCo, xCo1, yCo1, bike) * bikePref
- //and so on
+  setDScore(findRoute(xCo, yCo, PlaceOne.xCo,PlaceOne.yCo, PlaceOne.freq) * drivingPref);
+  setBScore(findRoute(xCo, yCo, PlaceOne.xCo,PlaceOne.yCo, PlaceOne.freq) * bikePref);
+  setWScore(findRoute(xCo, yCo, PlaceOne.xCo,PlaceOne.yCo, PlaceOne.freq) * walkPref);
+  setTScore(findRoute(xCo, yCo, PlaceOne.xCo,PlaceOne.yCo, PlaceOne.freq) * transitPref);
+ 
  //put each in a sorted data structure
  //take lowest option
  //multiply by freq
@@ -133,30 +150,48 @@ function calculateStrength(xCo, yCo) {
     });
   }
 
-    async function findBestHome(data) {
+    async function findBestHome() {
       //matrix stuff
       //calculateStrength(place being tested)
     }
 
     async function findRouteHelper(data) {
-      // const position5 = new google.maps.LatLng(53.5, 9.8);
-      // const position4 = new google.maps.LatLng(53, 9);
-      // const position1 = new google.maps.LatLng(data.coX,data.coY);
-      // const position2 = new google.maps.LatLng(data.coX1,data.coY1);
-      // const position3 = new google.maps.LatLng(data.coX2,data.coY2);
+      setBikePref(data.bike);
+      setWalkPref(data.walk);
+      setDrivingPref(data.car);
+      setTransitPref(data.transit);
+      setPlaceOne(Place(data.coX, data.coY, data.freq));
+      setPlaceTwo(Place(data.coX1, data.coY1, data.freq1));
+      setPlaceThree(Place(data.coX2, data.coY2, data.freq2));
+      setPlaceFour(Place(data.coX3, data.coY3, data.freq3));
+      setPlaceFive(Place(data.coX4, data.coY4, data.freq4));
+      console.log(PlaceOne);
+            //add each place to list and find min and maxes
+      if (PlaceOne.coX != "" && PlaceOne.coY != "" && PlaceOne.freq != "") {
+        console.log('reached');
+        if (list != null) {
+          const newList = list.concat({PlaceOne});
+          setList(newList);
+        } else {
+          setList({PlaceOne})
+        }
+      }
+      /*if (PlaceTwo.coX != "" && PlaceTwo.coY != "" && PlaceTwo.freq != "") {
+        const newList = (list.concat({PlaceTwo}));
+        setList(newList);
+      }*/
+      console.log(list);
 
-      // DOESNT WORK: findRoute(parseFloat(data.coX), 9.8, 53,9, 'WALKING');
-      findRoute(parseFloat(data.coX), parseFloat(data.coY), parseFloat(data.coX1), parseFloat(data.coY1), 'WALKING');
-      // WORKS: findRoute(53.5, 9.8, 53,9, 'WALKING');
+      //findRoute(data.add1, data.add1, data.add2, data.add2, 'DRIVING');
+      findBestHome();
     }
 
-  
-
-
   async function findRoute(xCo, yCo, xCo1, yCo1, method) {
+    
     setPosition({lat:xCo, lng:yCo}); //this will be moved to the strength calculation function when that is ready, this is just for testing
     
-    const {DirectionsService} = await google.maps.importLibrary("routes")
+
+    const {DirectionsService} = await google.maps.importLibrary("routes") 
     const dService = new DirectionsService //added() here idk why it worked
 
     const origin1 = new google.maps.LatLng(xCo, yCo)
@@ -172,87 +207,7 @@ function calculateStrength(xCo, yCo) {
     setTravelTime(result.routes[0].legs[0].duration.text)
     console.log(distance)
     console.log(travelTime) 
-    alert(`These two places are ${distance} far apart, and will take ${travelTime} to get there.`);
   }
-
-
-  // let marker;
-  // let response;
-
-  async function findLocation(data) {
-    // const {DirectionsService} = await google.maps.importLibrary("places")
-    // const dService = new DirectionsService //added() here idk why it worked
-    // const inputText = document.createElement("input");
-    // inputText.type = "text";
-    // inputText.placeholder = "Enter a location";
-    
-    // let response = geocode({ address: "125 NW 10th St, Gainesville, FL 32601" });
-    let response = geocode({ address: data.add1 });
-    //position temp changes to add1
-    // !!!!!!!!!!!!!!!
-    // MUST SET THE coX & coY value here but cannot for some reason
-    // Keep getting rawCenter.toJSON error  
-
-    // setData({coX: parseFloat(position.lat).valueOf,coY: parseFloat(position.lng).valueOf});
-    // setData({coX: position.lat.valueOf,coY: (position.lng.valueOf)});
-    //  response = geocode({ address: data.add2 });
-    //  setData({coX1: position.lat,coY1: position.lng});
-    //  response = geocode({ address: data.add3 });
-    //  setData({coX2: position.lat,coY2: position.lng});
-
-
-    findRouteHelper(data);
-
-  }
-
-  // function clear() {
-  //   marker.setMap(null);
-  //   responseDiv.style.display = "none";
-  // }
-
-
-  function geocode(request) {
-
-    let geocoder = new google.maps.Geocoder();
-    let response;
-      let responseDiv;
-
-
-    response = document.createElement("pre");
-  response.id = "response";
-  response.innerText = "";
-  responseDiv = document.createElement("div");
-  responseDiv.id = "response-container";
-  responseDiv.appendChild(response);
-
-
-    // clear();
-    geocoder
-      .geocode(request)
-      .then((result) => {
-        const { results } = result;
-        //manipuates map
-        setPosition(results[0].geometry.location);
-        //individual manipulation isn't working
-        // setPosition({ lat: results[0].geometry.location.lat});
-        // setPosition({ lng: results[0].geometry.location.lng});
-        // setPosition({ lat: results[0].geometry.location.lat,lng: results[0].geometry.location.lng });
-
-        // map.setCenter(results[0].geometry.location);
-        console.log("lat" + parseFloat(JSON.stringify(results[0].geometry.location.lat,null,2)));
-        // marker.setMap(map);
-        // setData({coX: parseFloat(results[0].geometry.location.lat),coY: parseFloat(results[0].geometry.location.lng)});
-
-        responseDiv.style.display = "block";
-        // console.log(results[0].location.lat);
-        console.log("result of geocoder" + JSON.stringify(results, null, 2));
-        return results;
-      })
-      .catch((e) => {
-        alert("Geocode was not successful for the following reason: " + e);
-      });
-  }
-
 }
 
 
