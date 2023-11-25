@@ -46,9 +46,9 @@ return (
       <label htmlFor="add1">Address 1</label>
       <textarea id="add1" placeholder="0"  name="add1" value={formData.add1} onChange={handleChange}/>
 
-      <label htmlFor="coord1">Coords. 1</label>
+      {/* <label htmlFor="coord1">Coords. 1</label>
       <input id="coX"  type="number" placeholder="0"  name="coX" value={formData.coX} onChange={handleChange}/>
-      <textarea id="coY"  placeholder="0"  name="coY" value={formData.coY} onChange={handleChange}/>
+      <textarea id="coY"  placeholder="0"  name="coY" value={formData.coY} onChange={handleChange}/> */}
 
       <label htmlFor="coord2">Coords. 2</label>
       <input id="coX1"  placeholder="0"  name="coX1" value={formData.coX1} onChange={handleChange}/>

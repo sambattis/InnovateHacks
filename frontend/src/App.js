@@ -60,11 +60,12 @@ export default function App() {
 
   //destinationRef = position
   //originRef = position2
-//
+//// {process.env.GOOGLE_MAPS_API_KEY}
+
 
   return (
     
-    <APIProvider apiKey = "AIzaSyCF_DLds_klTXOc8ot-lpUhqdDrHMQ1s_4">
+    <APIProvider apiKey = {process.env.GOOGLE_MAPS_API_KEY}>
 
       <div className="App">
         <header className="App-header">
@@ -188,8 +189,12 @@ function calculateStrength(xCo, yCo) {
     // let response = geocode({ address: "125 NW 10th St, Gainesville, FL 32601" });
     let response = geocode({ address: data.add1 });
     //position temp changes to add1
+    // !!!!!!!!!!!!!!!
     // MUST SET THE coX & coY value here but cannot for some reason
-    // setData({coX: position.lat.,coY: (position.lng.valueOf)});
+    // Keep getting rawCenter.toJSON error  
+
+    // setData({coX: parseFloat(position.lat).valueOf,coY: parseFloat(position.lng).valueOf});
+    // setData({coX: position.lat.valueOf,coY: (position.lng.valueOf)});
     //  response = geocode({ address: data.add2 });
     //  setData({coX1: position.lat,coY1: position.lng});
     //  response = geocode({ address: data.add3 });
