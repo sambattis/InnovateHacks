@@ -62,7 +62,7 @@ export default function App() {
 
   return (
     
-    <APIProvider apiKey = {process.env.REACT_APP_API_KEY}>
+    <APIProvider apiKey = "AIzaSyCF_DLds_klTXOc8ot-lpUhqdDrHMQ1s_4">
 
       <div className="App">
         <header className="App-header">
@@ -147,35 +147,7 @@ function calculateStrength(xCo, yCo) {
       findRoute(parseFloat(data.coX), parseFloat(data.coY), parseFloat(data.coX1), parseFloat(data.coY1), 'WALKING');
     }
 
-      async function findLocation(address) {
-        const {DirectionsService} = await google.maps.importLibrary("places")
-        const dService = new DirectionsService //added() here idk why it worked
-        let geocoder = new google.maps.Geocoder();
-        const inputText = document.createElement("university of florida");
-        inputText.type = "text";
-        inputText.placeholder = "Enter a location";
-      
-        const submitButton = document.createElement("input");
-
-        submitButton.type = "button";
-        submitButton.value = "Geocode";
-        submitButton.classList.add("button", "button-primary");
-
-        const clearButton = document.createElement("input");
-
-  clearButton.type = "button";
-  clearButton.value = "Clear";
-  clearButton.classList.add("button", "button-secondary");
-  let response = document.createElement("pre");
-  response.id = "response";
-  let responseDiv;
-
-    response.innerText = "";
-    responseDiv = document.createElement("div");
-    responseDiv.id = "response-container";
-    responseDiv.appendChild(response);
-
-      }
+  
 
 
   async function findRoute(xCo, yCo, xCo1, yCo1, method) {

@@ -21,8 +21,6 @@ export default function Multiple({childToParent}){
     event.preventDefault();
     setData(formData);
     childToParent(data);
-    // alert(`Car: ${formData.car}, Walk: ${formData.walk}, bus: ${formData.bus},add1: ${formData.add1}, add2: ${formData.add2}, add3: ${formData.add3}`
-    // );
 };
 return (
     <div className="form-box">
