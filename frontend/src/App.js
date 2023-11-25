@@ -28,7 +28,9 @@ export default function App() {
   const [selected, setSelected] = useState(null);
 
   const [position, setPosition] = useState({lat: 51, lng: 10});
-  const [data, setData] = useState({car: "",walk: "",bus: "",coX: 10,coY: 10,coX1: 10,coY1: 10,coX2: 10, coY2: 10});
+  // const [data, setData] = useState({car: "",walk: "",bus: "",coX: 10,coY: 10,coX1: 10,coY1: 10,coX2: 10, coY2: 10});
+  const [data, setData] = useState({car: "",walk: "",bus: "",coX: 10,coY: 10,coX1: 10,coY1: 10,coX2: 10, coY2: 10, add1: "120 NW 10th St, Gainesville, FL 32601", add2: "",add3: ""});
+
 
   const childToParent = (childdata) => {
     setData(childdata);
@@ -67,7 +69,8 @@ export default function App() {
       <div className="App">
         <header className="App-header">
           <h>NuCasa</h>
-          <button onClick ={() =>findRouteHelper(data)}>testDirections</button>
+          <button onClick ={() =>findLocation(data)}>testDirections</button>
+          {/* <button onClick ={() =>findRouteHelper(data)}>testDirections</button> */}
         </header>
       </div>
      
@@ -135,23 +138,21 @@ function calculateStrength(xCo, yCo) {
     }
 
     async function findRouteHelper(data) {
-      const position5 = new google.maps.LatLng(53.5, 9.8);
-      const position4 = new google.maps.LatLng(53, 9);
-      const position1 = new google.maps.LatLng(data.coX,data.coY);
-      const position2 = new google.maps.LatLng(data.coX1,data.coY1);
-      const position3 = new google.maps.LatLng(data.coX2,data.coY2);
-      //findRoute(data.add1, data.add1, data.add2, data.add2, 'DRIVING');
-      // findRoute(53.5, 9.8, 53,9, 'WALKING');
-      //can manipulate a pass on X 
-      // findRoute(parseFloat(data.coX), 9.8, 53,9, 'WALKING');
+      // const position5 = new google.maps.LatLng(53.5, 9.8);
+      // const position4 = new google.maps.LatLng(53, 9);
+      // const position1 = new google.maps.LatLng(data.coX,data.coY);
+      // const position2 = new google.maps.LatLng(data.coX1,data.coY1);
+      // const position3 = new google.maps.LatLng(data.coX2,data.coY2);
+
+      // DOESNT WORK: findRoute(parseFloat(data.coX), 9.8, 53,9, 'WALKING');
       findRoute(parseFloat(data.coX), parseFloat(data.coY), parseFloat(data.coX1), parseFloat(data.coY1), 'WALKING');
+      // WORKS: findRoute(53.5, 9.8, 53,9, 'WALKING');
     }
 
   
 
 
   async function findRoute(xCo, yCo, xCo1, yCo1, method) {
-    
     setPosition({lat:xCo, lng:yCo}); //this will be moved to the strength calculation function when that is ready, this is just for testing
     
     const {DirectionsService} = await google.maps.importLibrary("routes")
@@ -172,6 +173,81 @@ function calculateStrength(xCo, yCo) {
     console.log(travelTime) 
     alert(`These two places are ${distance} far apart, and will take ${travelTime} to get there.`);
   }
+
+
+  // let marker;
+  // let response;
+
+  async function findLocation(data) {
+    // const {DirectionsService} = await google.maps.importLibrary("places")
+    // const dService = new DirectionsService //added() here idk why it worked
+    // const inputText = document.createElement("input");
+    // inputText.type = "text";
+    // inputText.placeholder = "Enter a location";
+    
+    // let response = geocode({ address: "125 NW 10th St, Gainesville, FL 32601" });
+    let response = geocode({ address: data.add1 });
+    //position temp changes to add1
+    // MUST SET THE coX & coY value here but cannot for some reason
+    // setData({coX: position.lat.,coY: (position.lng.valueOf)});
+    //  response = geocode({ address: data.add2 });
+    //  setData({coX1: position.lat,coY1: position.lng});
+    //  response = geocode({ address: data.add3 });
+    //  setData({coX2: position.lat,coY2: position.lng});
+
+
+    findRouteHelper(data);
+
+  }
+
+  // function clear() {
+  //   marker.setMap(null);
+  //   responseDiv.style.display = "none";
+  // }
+
+
+  function geocode(request) {
+
+    let geocoder = new google.maps.Geocoder();
+    let response;
+      let responseDiv;
+
+
+    response = document.createElement("pre");
+  response.id = "response";
+  response.innerText = "";
+  responseDiv = document.createElement("div");
+  responseDiv.id = "response-container";
+  responseDiv.appendChild(response);
+
+
+    // clear();
+    geocoder
+      .geocode(request)
+      .then((result) => {
+        const { results } = result;
+        //manipuates map
+        setPosition(results[0].geometry.location);
+        //individual manipulation isn't working
+        // setPosition({ lat: results[0].geometry.location.lat});
+        // setPosition({ lng: results[0].geometry.location.lng});
+        // setPosition({ lat: results[0].geometry.location.lat,lng: results[0].geometry.location.lng });
+
+        // map.setCenter(results[0].geometry.location);
+        console.log("lat" + parseFloat(JSON.stringify(results[0].geometry.location.lat,null,2)));
+        // marker.setMap(map);
+        // setData({coX: parseFloat(results[0].geometry.location.lat),coY: parseFloat(results[0].geometry.location.lng)});
+
+        responseDiv.style.display = "block";
+        // console.log(results[0].location.lat);
+        console.log("result of geocoder" + JSON.stringify(results, null, 2));
+        return results;
+      })
+      .catch((e) => {
+        alert("Geocode was not successful for the following reason: " + e);
+      });
+  }
+
 }
 
 

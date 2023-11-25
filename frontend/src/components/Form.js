@@ -5,7 +5,8 @@ import '../App.css';
 
 export default function Multiple({childToParent}){
   // const [formData, setFormData] = useState({car: "",walk: "",bus: "",bike: "",coX: "",coY: "",coX1: "",coY1: "",coX2: "", coY2: ""});
-  const [formData, setFormData] = useState({car: "",walk: "",bus: "",bike: "",coX: 11,coY: 11,coX1: 11,coY1: 11,coX2: 11, coY2: 11});
+  // const [formData, setFormData] = useState({car: "",walk: "",bus: "",bike: "",coX: 11,coY: 11,coX1: 11,coY1: 11,coX2: 11, coY2: 11});
+  const [formData, setFormData] = useState({car: "",walk: "",bus: "",coX: 10,coY: 10,coX1: 10,coY1: 10,coX2: 10, coY2: 10, add1: "", add2: "",add3: ""});
 
 //   const data = "This is data from Child Component to the Parent Component."
 
@@ -41,6 +42,9 @@ return (
 
       <label htmlFor="bus">Bus:</label>
       <input placeholder = "0-100" id="bus" type="number" name="bus" value={formData.bus} onChange={handleChange}/>
+
+      <label htmlFor="add1">Address 1</label>
+      <textarea id="add1" placeholder="0"  name="add1" value={formData.add1} onChange={handleChange}/>
 
       <label htmlFor="coord1">Coords. 1</label>
       <input id="coX"  type="number" placeholder="0"  name="coX" value={formData.coX} onChange={handleChange}/>
