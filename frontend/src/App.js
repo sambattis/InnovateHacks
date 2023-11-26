@@ -35,7 +35,8 @@ export default function App() {
 
   const childToParent = (childdata) => {
     setData(childdata);
-    console.log(data);
+    findRouteHelper(data);
+    //console.log(data);
   }
 
   const [map, setMap] = useState((null))
@@ -75,7 +76,6 @@ export default function App() {
       <div className="App">
         <header className="App-header">
           <h>NuCasa</h>
-          <button className= "button-4" onClick ={() =>findRouteHelper(data)}>testDirections</button>
         </header>
       </div>
      
@@ -125,81 +125,34 @@ async function calculateStrength(xCo, yCo) {
     if (wScore < bScore && wScore < dScore) {
       bestScore = wScore;
     }
-    let placeOneScore = bestScore * parseFloat(PlaceOne.freq_);
+    let placeOneScore = bestScore * parseFloat(list.freq_);
     totalScore += placeOneScore;
   }
   //console.log(totalScore);
  return totalScore;
 }
-
-  function useDirectionsRenderer({dService}) {
-    const isLoaded  = useApiIsLoaded({
-      googleMapsApiKey: process.env.REACT_APP_API_KEY,
-      libraries: ["places"],
-    });
- 
-   
-    const position2 = new google.maps.LatLng(53.5, 9.8);
-
-    
-    const directionsRenderer = useMapsLibrary('directionsRenderer');
-    directionsRenderer.setMap(map);
-    const request = dService.route({
-      travelMode: 'DRIVING',
-      destination: position,
-      origin: position2,
-    })
-    dService.route(request, function(result, status) {
-      if (status == 'OK') {
-        directionsRenderer.setDirections(result);
-      }
-    });
-  }
     
     async function findBestHome(minX, maxX, minY, maxY) {
-      let maxScore = 0;
+      let bestScore = 0;
+      let maxScore = 999999;
       let it = 0;
-      let it1 = 0;
       while (it < 9) {
+        let it1 = 0;
         while (it1 < 9) {
           let testVal = await calculateStrength(parseFloat(minX) + it * (maxY-minY)/9, parseFloat(minY) + it1 * (maxY-minY)/9);
+          //console.log(parseFloat((minX)) + it * (maxY-minY)/9);
           //console.log(testVal);
-          if (testVal > maxScore) {
+           // console.log(maxScore);
+          if (testVal < maxScore) {
             //console.log("improved")
-            maxScore = testVal;
+            bestScore = testVal;
             setBestX(parseFloat(minX) + it *(maxX-minX)/9);
             setBestY(parseFloat(minY) + it1 * (maxY-minY)/9);
           }
           it1++;
         }
-        let testVal = await calculateStrength(parseFloat(minX) + it * (maxY-minY)/9, parseFloat(minY) + it1 * (maxY-minY)/9);
-          if (testVal > maxScore) {
-            //console.log("improved")
-            maxScore = testVal;
-            setBestX(parseFloat(minX) + it *(maxX-minX)/9);
-            setBestY(parseFloat(minY) + it1 * (maxY-minY)/9);
-          }
         it++;
       }
-      /*
-      let newMinX = bestX - (maxX-minX)/9;
-      let newMaxX = bestX + (maxX-minX)/9;
-      let newMinY = bestY - (maxY-minY)/9;
-      let newMaxY = bestY + (maxY-minY)/9;
-
-      while (it < 9) {
-        while (it1 < 9) {
-          let testVal = calculateStrength(newMinX + it *(newMaxX-newMinX)/9, newMinY + it1 * (newMaxY-newMinY)/9);
-          if (testVal > maxScore) {
-            maxScore = testVal;
-            setBestX(minX + it *(newMaxX-newMinX)/9);
-            setBestY(minY + it1 * (newMaxY-newMinY)/9);
-          }
-          it1++;
-        }
-        it++;
-      }
-      */
     }
 
     async function findRouteHelper(data) {
@@ -266,6 +219,8 @@ async function calculateStrength(xCo, yCo) {
 
       await findBestHome(minX, maxX, minY, maxY);
       console.log('You should live at');
+      console.log(bestX);
+      console.log(bestY);
       console.log({lat: bestX, lng:bestY});
       setPosition({lat: bestX, lng:bestY});
     }
@@ -366,3 +321,28 @@ async function calculateStrength(xCo, yCo) {
 
 window.App= App;
 
+
+
+/*  function useDirectionsRenderer({dService}) {
+    const isLoaded  = useApiIsLoaded({
+      googleMapsApiKey: process.env.REACT_APP_API_KEY,
+      libraries: ["places"],
+    });
+ 
+   
+    const position2 = new google.maps.LatLng(53.5, 9.8);
+
+    
+    const directionsRenderer = useMapsLibrary('directionsRenderer');
+    directionsRenderer.setMap(map);
+    const request = dService.route({
+      travelMode: 'DRIVING',
+      destination: position,
+      origin: position2,
+    })
+    dService.route(request, function(result, status) {
+      if (status == 'OK') {
+        directionsRenderer.setDirections(result);
+      }
+    });
+  }*/
