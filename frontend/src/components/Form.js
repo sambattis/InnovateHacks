@@ -116,7 +116,7 @@ return (
       <label htmlFor="coord2">Coords. 2</label>
       <textarea id="coX1"  placeholder="0"  name="coX1" value={formData.coX1} onChange={handleChange}/>
       <textarea id="coY1"  placeholder="0"  name="coY1" value={formData.coY1} onChange={handleChange}/>
-      <textarea id="freq1"  placeholder="0"  name="freq" value={formData.freq1} onChange={handleChange}/>
+      <textarea id="freq1"  placeholder="0"  name="freq1" value={formData.freq1} onChange={handleChange}/>
 
       <label htmlFor="coord3">Coords. 3</label>
       <textarea id="coX2"  placeholder="0"  name="coX2" value={formData.coX2} onChange={handleChange}/>

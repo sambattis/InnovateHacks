@@ -105,14 +105,17 @@ export default function App() {
 async function calculateStrength(xCo, yCo) {
   let totalScore = 0;
   //console.log(xCo);
+  let dScore = 99999;
+  let bScore = 99999;
+  let wScore = 99999;
   //console.log(yCo);
   for (let i = 0; i < list.length; i++) {
     //console.log((await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'DRIVING')));
-    let dScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'DRIVING')) * parseFloat(drivingPref);
-    let bScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'BICYCLING')) * parseFloat(bikePref);
-    let wScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'WALKING')) * parseFloat(walkPref);
+    dScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'DRIVING')) * parseFloat(drivingPref);
+    bScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'BICYCLING')) * parseFloat(bikePref);
+    wScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'WALKING')) * parseFloat(walkPref);
     //setTScore(findRoute(xCo, yCo, PlaceOne.xCo_,PlaceOne.yCo_, 'TRANSIT') * transitPref);
-    
+    //console.log(parseFloat(dScore));
     //console.log(bScore);
     //console.log(wScore);
     let bestScore = 0;
@@ -125,27 +128,30 @@ async function calculateStrength(xCo, yCo) {
     if (wScore < bScore && wScore < dScore) {
       bestScore = wScore;
     }
-    let placeOneScore = bestScore * parseFloat(list.freq_);
-    totalScore += placeOneScore;
+    //console.log(bestScore);
+    let curScore = parseFloat(bestScore) * parseFloat(list[i].freq_);
+    //console.log(totalScore);
+   // console.log(curScore);
+    //console.log(parseFloat(curScore));
+    totalScore += parseFloat(curScore);
+    //console.log(totalScore);
   }
   //console.log(totalScore);
  return totalScore;
 }
     
     async function findBestHome(minX, maxX, minY, maxY) {
-      let bestScore = 0;
-      let maxScore = 999999;
+      let bestScore = 99999999;
       let it = 0;
       while (it < 9) {
         let it1 = 0;
         while (it1 < 9) {
           let testVal = await calculateStrength(parseFloat(minX) + it * (maxY-minY)/9, parseFloat(minY) + it1 * (maxY-minY)/9);
-          //console.log(parseFloat((minX)) + it * (maxY-minY)/9);
-          //console.log(testVal);
-           // console.log(maxScore);
-          if (testVal < maxScore) {
+           //console.log(testVal);
+          if (testVal < bestScore) {
             //console.log("improved")
             bestScore = testVal;
+
             setBestX(parseFloat(minX) + it *(maxX-minX)/9);
             setBestY(parseFloat(minY) + it1 * (maxY-minY)/9);
           }
@@ -156,10 +162,10 @@ async function calculateStrength(xCo, yCo) {
     }
 
     async function findRouteHelper(data) {
-      let minX = 999;
-      let maxX = -999;
-      let minY = 999;
-      let maxY = -999;
+      let minX = 90;
+      let maxX = -90;
+      let minY = 90;
+      let maxY = -90;
       setBikePref(data.bike);
       setWalkPref(data.walk);
       setDrivingPref(data.car);
