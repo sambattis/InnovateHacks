@@ -51,16 +51,11 @@ export default function App() {
   const travelMethodRef = useRef()
 
   const Place = function(xCo, yCo, freq) {
-    const xCo_ = xCo;
-    const yCo_ = yCo;
-    const freq_ = freq;
+    let xCo_ = xCo;
+    let yCo_ = yCo;
+    let freq_ = freq;
     return { xCo_, yCo_, freq_ };
   };
-
-  const [dScore, setDScore] = useState(null)
-  const [wScore, setWScore] = useState(null)
-  const [bScore, setBScore] = useState(null)
-  const [tScore, setTScore] = useState(null)
 
   const [PlaceOne, setPlaceOne] = useState(null)
   const [PlaceTwo, setPlaceTwo] = useState(null)
@@ -69,11 +64,6 @@ export default function App() {
   const [PlaceFive, setPlaceFive] = useState(null)
 
   const [list, setList] = useState([])
-
-  const [minX, setMinX] = useState(null) //should this be 0 or something
-  const [minY, setMinY] = useState(null)
-  const [maxX, setMaxX] = useState(null)
-  const [maxY, setMaxY] = useState(null)
 
   const [bestX, setBestX] = useState(0)
   const [bestY, setBestY] = useState(0)
@@ -89,14 +79,14 @@ export default function App() {
         </header>
       </div>
      
-      <div class="split left-panel ">
+      <div className="split left-panel ">
         <Multiple childToParent={childToParent}/>
           <p>{childToParent}</p>
-          <button primary onClick={() => childToParent(data)}>Click Child</button>
+          <button primary onClick={() => childToParent(data)}>Click Child</button> 
       </div>
 
 
-      <div class="split right-panel " style = {{height: "97vh"} }>
+      <div className="split right-panel " style = {{height: "97vh"} }>
         <Map zoom = {9} center = {position} onLoad={map => setMap(map)}>
         {dResponse && (
             <useDirectionsRenderer directions={dResponse} />
@@ -108,27 +98,38 @@ export default function App() {
     
   );
 //onLoad={map => setMap(map)}
+//need to hide the childtoparent button
 
 
 
-function calculateStrength(xCo, yCo) {
-  const totalScore = 0;
-  console.log(PlaceOne.xCo_);
-  console.log(PlaceOne.yCo_);
-  let test1 = PlaceOne.xCo_;
-  let test2 = PlaceOne.yCo_;
-  findRoute(test1, test2, 49, 8, 'DRIVING');
-  /*
-  setDScore(findRoute(xCo, yCo, PlaceOne.xCo_,PlaceOne.yCo_, 'DRIVING') * drivingPref);
-  setBScore(findRoute(xCo, yCo, PlaceOne.xCo_,PlaceOne.yCo_, 'BICYCLING') * bikePref);
-  setWScore(findRoute(xCo, yCo, PlaceOne.xCo_,PlaceOne.yCo_, 'WALKING') * walkPref);
-  setTScore(findRoute(xCo, yCo, PlaceOne.xCo_,PlaceOne.yCo_, 'TRANSIT') * transitPref);*/
- 
- //put each in a sorted data structure
- //take lowest option
- //multiply by freq
- //add to totalScore
- //repeat for all places
+async function calculateStrength(xCo, yCo) {
+  let totalScore = 0;
+  //console.log(xCo);
+  //console.log(yCo);
+  for (let i = 0; i < list.length; i++) {
+    //console.log((await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'DRIVING')));
+    let dScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'DRIVING')) * parseFloat(drivingPref);
+    let bScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'BICYCLING')) * parseFloat(bikePref);
+    let wScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'WALKING')) * parseFloat(walkPref);
+    //setTScore(findRoute(xCo, yCo, PlaceOne.xCo_,PlaceOne.yCo_, 'TRANSIT') * transitPref);
+    
+    //console.log(bScore);
+    //console.log(wScore);
+    let bestScore = 0;
+    if (dScore < bScore && dScore < wScore) {
+      bestScore = dScore;
+    }
+    if (bScore < dScore && bScore < wScore) {
+      bestScore = bScore;
+    }
+    if (wScore < bScore && wScore < dScore) {
+      bestScore = wScore;
+    }
+    let placeOneScore = bestScore * parseFloat(PlaceOne.freq_);
+    totalScore += placeOneScore;
+  }
+  //console.log(totalScore);
+ return totalScore;
 }
 
   function useDirectionsRenderer({dService}) {
@@ -161,16 +162,26 @@ function calculateStrength(xCo, yCo) {
       let it1 = 0;
       while (it < 9) {
         while (it1 < 9) {
-          let testVal = calculateStrength(minX + it *(maxX-minX)/9, minY + it1 * (maxY-minY)/9);
+          let testVal = await calculateStrength(parseFloat(minX) + it * (maxY-minY)/9, parseFloat(minY) + it1 * (maxY-minY)/9);
+          //console.log(testVal);
           if (testVal > maxScore) {
+            //console.log("improved")
             maxScore = testVal;
-            setBestX(minX + it *(maxX-minX)/9);
-            setBestY(minY + it1 * (maxY-minY)/9);
+            setBestX(parseFloat(minX) + it *(maxX-minX)/9);
+            setBestY(parseFloat(minY) + it1 * (maxY-minY)/9);
           }
           it1++;
         }
+        let testVal = await calculateStrength(parseFloat(minX) + it * (maxY-minY)/9, parseFloat(minY) + it1 * (maxY-minY)/9);
+          if (testVal > maxScore) {
+            //console.log("improved")
+            maxScore = testVal;
+            setBestX(parseFloat(minX) + it *(maxX-minX)/9);
+            setBestY(parseFloat(minY) + it1 * (maxY-minY)/9);
+          }
         it++;
       }
+      /*
       let newMinX = bestX - (maxX-minX)/9;
       let newMaxX = bestX + (maxX-minX)/9;
       let newMinY = bestY - (maxY-minY)/9;
@@ -188,9 +199,14 @@ function calculateStrength(xCo, yCo) {
         }
         it++;
       }
+      */
     }
 
     async function findRouteHelper(data) {
+      let minX = 999;
+      let maxX = -999;
+      let minY = 999;
+      let maxY = -999;
       setBikePref(data.bike);
       setWalkPref(data.walk);
       setDrivingPref(data.car);
@@ -200,71 +216,130 @@ function calculateStrength(xCo, yCo) {
       setPlaceThree(Place(data.coX2, data.coY2, data.freq2));
       setPlaceFour(Place(data.coX3, data.coY3, data.freq3));
       setPlaceFive(Place(data.coX4, data.coY4, data.freq4));
-      console.log(PlaceOne);
-      console.log(PlaceOne.xCo_);
-      console.log(PlaceFive);
-      console.log(PlaceFive.xCo_)            //add each place to list and find min and maxes
-      if (PlaceOne.xCo_ != null && PlaceOne.yCo_ != null && PlaceOne.freq_ != null) {
+      let newList = [];
+      if (PlaceOne.xCo_ != "" && PlaceOne.yCo_ != "" && PlaceOne.freq_ != "") {
         console.log('reached One');
-        if (list != null) {
-          const newList = list.concat({PlaceOne});
-          setList(newList);
-        } else {
-          setList({PlaceOne})
-        }
+        newList = newList.concat(PlaceOne);
       }
 
-      if (PlaceTwo.xCo_ != null && PlaceTwo.yCo_ != null && PlaceOne.freq_ != null) {
+      if (PlaceTwo.xCo_ != "" && PlaceTwo.yCo_ != "" && PlaceOne.freq_ != "") {
         console.log('reached Two');
-        if (list != null) {
-          const newList = list.concat({PlaceTwo});
-          setList(newList);
-        } else {
-          setList({PlaceTwo})
-        }
+        newList = newList.concat(PlaceTwo);
       }
-      if (PlaceThree.xCo_ != null && PlaceThree.yCo_ != null && PlaceThree.freq_ != null) {
+      if (PlaceThree.xCo_ != "" && PlaceThree.yCo_ != "" && PlaceThree.freq_ != "") {
         console.log('reached Three');
-        if (list != null) {
-          const newList = list.concat({PlaceThree});
-          setList(newList);
-        } else {
-          setList({PlaceThree})
-        }
+        newList = newList.concat(PlaceThree);
       }
 
-      if (PlaceFour.xCo_ != null && PlaceFour.yCo_ != null && PlaceFour.freq_ != null) {
+      if (PlaceFour.xCo_ != "" && PlaceFour.yCo_ != "" && PlaceFour.freq_ != "") {
         console.log('reached Four');
-        if (list != null) {
-          const newList = list.concat({PlaceFour});
-          setList(newList);
-        } else {
-          setList({PlaceFour})
-        }
+        newList = newList.concat(PlaceFour);
       }
 
-      if (PlaceFive.xCo_ != null && PlaceFive.yCo_ != null && PlaceFive.freq_ != null) {
+      if (PlaceFive.xCo_ != "" && PlaceFive.yCo_ != "" && PlaceFive.freq_ != "") {
         console.log('reached Five');
-        if (list != null) {
-          const newList = list.concat({PlaceFive});
-          setList(newList);
-        } else {
-          setList({PlaceFive})
-        }
+        newList = newList.concat(PlaceFive);
       }
       
-      console.log(list);
+      const finalNewList = newList;
+      setList(finalNewList);
 
-      //findRoute(data.add1, data.add1, data.add2, data.add2, 'DRIVING');
-      findBestHome();
-      setPosition(bestX, bestY);
+      console.log(list);
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].xCo_ > maxX) {
+          maxX = list[i].xCo_;
+        }
+        if (list[i].xCo_ < minX) {
+          minX = list[i].xCo_;
+        }
+        if (list[i].yCo_ > maxY) {
+          maxY = list[i].yCo_;
+        }
+        if (list[i].yCo_ < minY) {
+           minY = list[i].yCo_;
+        }
+      }
+      console.log(maxX);
+      console.log(maxY);
+      console.log(minX);
+      console.log(minY);
+
+      await findBestHome(minX, maxX, minY, maxY);
+      console.log('You should live at');
+      console.log({lat: bestX, lng:bestY});
+      setPosition({lat: bestX, lng:bestY});
     }
+
+  function parseTime(inputString) {
+    let regex = /(\d+) hours (\d+) mins/;
+    let match = inputString.match(regex);
+    let hours = 0;
+    let mins = 0;
+    //I think I'm still missing some options with days, will have to check later
+    if (!match) {
+      regex = /(\d+) day (\d+) hours/;
+      match = inputString.match(regex);
+      if (!match) {
+        regex = /(\d+) days (\d+) hours/;
+        match = inputString.match(regex);
+        if (!match) {
+          regex = /(\d+) hour (\d+) mins/;
+          match = inputString.match(regex);
+          if (!match) {
+            regex = /(\d+) hour (\d+) min/;
+            match = inputString.match(regex);
+            if (!match) {
+              regex = /(\d+) hours (\d+) min/;
+              match = inputString.match(regex);
+              if (!match) {
+                regex = /(\d+) mins/;
+                match = inputString.match(regex);
+                if (!match) {
+                  regex = /(\d+) mins/;
+                  match = inputString.match(regex);
+                  if (!match) {
+
+                  } else {
+                    hours = 0;
+                    mins = parseInt(match[1], 10);
+                  }
+                } else {
+                  hours = 0;
+                  mins = parseInt(match[1], 10);
+                }
+              } else {
+                hours = parseInt(match[1], 10);
+                mins = parseInt(match[2], 10);
+              }
+            } else {
+              hours = parseInt(match[1], 10); //error occurs at deepest point every time
+              mins = parseInt(match[2], 10); 
+            }
+          } else {
+            hours = parseInt(match[1], 10);
+            mins = parseInt(match[2], 10);
+          }
+        } else {
+          hours = parseInt(match[1] * 24, 10) + parseInt(match[2], 10);
+          mins = 0;
+        }
+      } else {
+        hours = parseInt(match[1] * 24, 10) + parseInt(match[2], 10);
+        mins = 0;
+      }
+    } else {
+      hours = parseInt(match[1], 10);
+      mins = parseInt(match[2], 10);
+    }
+    
+    let result = hours + mins / 60;
+    return result;
+  }
 
   async function findRoute(xCo, yCo, xCo1, yCo1, method) {
     
-    setPosition({lat:xCo, lng:yCo}); //this will be moved to the strength calculation function when that is ready, this is just for testing
-    
-
+    //console.log(xCo)
+    //console.log(yCo)
     const {DirectionsService} = await google.maps.importLibrary("routes") 
     const dService = new DirectionsService //added() here idk why it worked
 
@@ -279,8 +354,12 @@ function calculateStrength(xCo, yCo) {
 
     setDistance(result.routes[0].legs[0].distance.text)
     setTravelTime(result.routes[0].legs[0].duration.text)
-    console.log(distance)
-    console.log(travelTime) 
+    //parse time string and turn into double
+    let time = parseTime(result.routes[0].legs[0].duration.text)
+    // /console.log(time)
+    //console.log(distance)
+    //console.log(result.routes[0].legs[0].duration.text) 
+    return time
   }
 }
 
