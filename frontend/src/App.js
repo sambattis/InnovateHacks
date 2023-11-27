@@ -143,22 +143,57 @@ async function calculateStrength(xCo, yCo) {
     async function findBestHome(minX, maxX, minY, maxY) {
       let bestScore = 99999999;
       let it = 0;
-      while (it < 9) {
+      let firstBestX;
+      let firstBestY;
+      let xDiff = (parseFloat(maxX)-parseFloat(minX))/5;
+      let yDiff = (parseFloat(maxY)-parseFloat(minY))/5;
+      while (it < 5) {
         let it1 = 0;
-        while (it1 < 9) {
-          let testVal = await calculateStrength(parseFloat(minX) + it * (maxY-minY)/9, parseFloat(minY) + it1 * (maxY-minY)/9);
+        while (it1 < 5) {
+          let testVal = await calculateStrength(parseFloat(minX) + it * parseFloat(xDiff), parseFloat(minY) + it1 * parseFloat(yDiff));
            //console.log(testVal);
           if (testVal < bestScore) {
             //console.log("improved")
             bestScore = testVal;
 
-            setBestX(parseFloat(minX) + it *(maxX-minX)/9);
-            setBestY(parseFloat(minY) + it1 * (maxY-minY)/9);
+            firstBestX = parseFloat(minX) + it *(maxX-minX)/5;
+            firstBestY = parseFloat(minY) + it1 * (maxY-minY)/5;
           }
           it1++;
         }
         it++;
       }
+      let newMinX = parseFloat(firstBestX) - 0.5 * ((parseFloat(maxX)-parseFloat(minX))/5);
+      let newMaxX = parseFloat(firstBestX) + 0.5 * ((parseFloat(maxX)-parseFloat(minX))/5);
+      let newMinY = parseFloat(firstBestY) - 0.5 * ((parseFloat(maxY)-parseFloat(minY))/5);
+      let newMaxY = parseFloat(firstBestY) + 0.5 * ((parseFloat(maxY)-parseFloat(minY))/5);
+      //console.log(newMaxY);
+      //console.log(newMinY);
+      xDiff = (parseFloat(newMaxX)-parseFloat(newMinX))/5;
+      yDiff = (parseFloat(newMaxY)-parseFloat(newMinY))/5;
+      it = 0;
+      while (it < 5) {
+        let it1 = 0;
+        while (it1 < 5) {
+          let testVal = await calculateStrength(parseFloat(newMinX) + it * parseFloat(xDiff), parseFloat(newMinY) + it1 * (parseFloat(yDiff)));
+           //console.log(testVal);
+           //console.log(bestScore);
+          if (parseFloat(testVal) < parseFloat(bestScore)) {
+            //console.log("improved")
+            bestScore = testVal;
+            firstBestX = parseFloat(newMinX) + it * parseFloat(xDiff);
+            firstBestY = parseFloat(newMinY) + it1 * parseFloat(yDiff);
+            //console.log(parseFloat(newMinX) + it * parseFloat(xDiff));
+            
+          }
+          it1++;
+        }
+        it++;
+      }
+      //console.log(firstBestX);
+      //console.log(firstBestY);
+      setBestX(parseFloat(firstBestX));
+      setBestY(parseFloat(firstBestY));
     }
 
     async function findRouteHelper(data) {
@@ -302,7 +337,7 @@ async function calculateStrength(xCo, yCo) {
     //console.log(xCo)
     //console.log(yCo)
     const {DirectionsService} = await google.maps.importLibrary("routes") 
-    const dService = new DirectionsService //added() here idk why it worked
+    const dService = new DirectionsService() //added() here idk why it worked
 
     const origin1 = new google.maps.LatLng(xCo, yCo)
     const destination1 = new google.maps.LatLng(xCo1, yCo1)

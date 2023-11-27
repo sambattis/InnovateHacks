@@ -22,7 +22,7 @@ const google = window.google
 //Worst case handle api with form and save ideal location locally! & pull it down from local storage 
 
 export default function Multiple({childToParent}){
-  const [formData, setFormData] = useState({car: "",walk: "",transit: "",bike: "",coX: "",coY: "",freq: "",coX1: "",coY1: "", freq1: "", coX2: "", coY2: "", freq2: "", coX3: "", coY3: "", freq3: "", coX4: "", coY4: "", freq4: ""});
+  const [formData, setFormData] = useState({car: "",walk: "",bike: "",coX: "",coY: "",freq: "",coX1: "",coY1: "", freq1: "", coX2: "", coY2: "", freq2: "", coX3: "", coY3: "", freq3: "", coX4: "", coY4: "", freq4: ""});
   //const [formData, setFormData] = useState({car: "",walk: "",transit: "",bike: "",coX: "",coY: "",coX1: "",coY1: "",coX2: "", coY2: ""});
   const [LatLng, setLatLng] = useState();
   const [address, setAddress] = useState();
@@ -97,10 +97,6 @@ return (
 
       <label htmlFor="walk">Walk:</label>
       <input placeholder = "0-100" type="number" id="walk" name="walk" value={formData.walk} onChange={handleChange}/>
-
-      <label htmlFor="transit">Transit:</label>
-      <input placeholder = "0-100" id="transit" type="number" name="transit" value={formData.transit} onChange={handleChange}/>
-
 
       <label htmlFor="add1">Address Lookup</label>
       Found Address:  {address}
