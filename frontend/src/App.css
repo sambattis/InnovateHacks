@@ -21,6 +21,7 @@
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  padding: 15px;
 }
 
 .App-link {
@@ -80,7 +81,14 @@
   z-index: 1;
   top: 0;
   overflow-x: hidden;
-  padding-top: 20px;
+}
+
+.hide {
+  display: none;
+}
+
+.spacer {
+  padding-bottom: 20px;
 }
 
 .left-panel {
@@ -103,11 +111,11 @@
 
 .form-box {
   min-width: 100%;
-  height: 100vh;
+  height: 95vh;
   /* border: dotted #f55a00 5vw; */
   /* border: 1px solid red; */
   margin: 0vw;
-  padding: 5vw;
+  padding: 4vw;
   position: relative;
   /* position:relative for .prevBtn and .nextBtn position:absolute; */
 }
@@ -137,8 +145,12 @@ textarea {
   font-size: calc(10px + 1vmin);
 }
 
+.lfloat {
+  float: left;
+}
+
 .button-4 {
-  justify-content: center;
+  justify-content: center;  
   appearance: none;
   background-color: #FAFBFC;
   border: 1px solid rgba(27, 31, 35, 0.15);
@@ -168,6 +180,11 @@ textarea {
   background-color: #F3F4F6;
   text-decoration: none;
   transition-duration: 0.1s;
+}
+
+.side-by-side {
+  display: flex;
+  flex-direction: row;
 }
 
 .button-4:disabled {
