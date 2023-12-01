@@ -44,9 +44,23 @@ export default function Multiple({childToParent}){
 };
 
 async function findLocation(data) {
-  // let response = geocode({ address: "125 NW 10th St, Gainesville, FL 32601" });
   let response = geocode({ address: data.add1 });
 }
+
+        //help alerts
+      
+        const helpPref = (childdata) => {
+          alert("For Transport Mode Preference, input which method of transportation you prefer out of 100.\nExample: \nCar: 15 Bike: 20 Walk: 40 \nExplanation:\nthese preferences indicate that a car trip duration of 15 minutes is equally undesireable as 20 minutes biking or 40 minutes walking");
+        }
+      
+        const helpAdd= (childdata) => {
+          alert("For Address Lookup, input an address you want the Coordinates (longitude and latitude) for.\nExample: You want to find the Coordnates for Ben Hill Griffin Stadium\nAction: you type in the address\"157 Gale Lemerand Dr, Gainesville, FL 32611\" and the correct coordinates should appear below when you click \"Address Lookup\" \nUse these values for Coordinates!");
+        }
+
+        const helpCoord = (childdata) => {
+          alert("For Coordinates, input the longitude, latitude and frequency of visits per week.\nExample: Ben Hill Griffin Stadium is [29.6505,-82.3478] and you go there twice a week. You shold input: [29.6505] [-82.3478] [2] in the boxes.");
+        }
+      
 
 function geocode(request) {
 
@@ -80,11 +94,13 @@ responseDiv.appendChild(response);
     .catch((e) => {
       alert("Geocode was not successful for the following reason: " + e);
     });
+
+
 }
 return (
     <div className="form-box">
     <form onSubmit={handleSubmit}>
-    <label htmlFor="add1">Transport Mode Preference</label>
+    <label htmlFor="add1" className = "button-help" onClick ={() =>helpPref(data)}>Transport Mode Preference</label>
       {/* show hint when hover */}
       <div className="field1">
       <label htmlFor="car">Car:</label>
@@ -96,14 +112,14 @@ return (
       <label htmlFor="walk">Walk:</label>
       <input placeholder = "0-100" type="number" id="walk" name="walk" value={formData.walk} onChange={handleChange}/>
 
-      <label htmlFor="add1">Address Lookup</label>
+      <label htmlFor="add1" className = "button-help" onClick ={() =>helpAdd(data)}>Address Lookup</label>
       Found Address:  {address}
       <textarea id="add1" placeholder="0"  name="add1" value={formData.add1} onChange={handleChange}/>
       <button className= "button-4" onClick ={() =>findLocation(data)}>Address Lookup</button>
-      Use found values for Coordinates! 
  {LatLng}
       <div className = "spacer"></div>
-      <label htmlFor="coord1">X-Y-Freq 1</label>
+      <label htmlFor="coord1" className = "button-help" onClick ={() =>helpCoord(data)}>X-Y-Freq 1</label>
+
       <textarea id="coX"  placeholder="0"  name="coX" value={formData.coX} onChange={handleChange}/>
       <textarea id="coY"  placeholder="0"  name="coY" value={formData.coY} onChange={handleChange}/>
       <textarea id="freq"  placeholder="0"  name="freq" value={formData.freq} onChange={handleChange}/>
