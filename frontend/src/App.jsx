@@ -75,7 +75,7 @@ export default function App() {
 
       <div className="App">
         <header className="App-header">
-          <h>NuCasa - Where Should I Live?</h>
+          <h>NuCasa</h>
         </header>
       </div>
      
