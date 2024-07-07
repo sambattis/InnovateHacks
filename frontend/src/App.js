@@ -75,7 +75,8 @@ export default function App() {
 
       <div className="App">
         <header className="App-header">
-          <h>NuCasa</h>
+          <h3>NuCasa</h3>
+          <body> <i>The perfect app for quick location triangulation! </i> </body> 
         </header>
       </div>
      
