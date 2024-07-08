@@ -50,11 +50,11 @@ async function findLocation(data) {
         //help alerts
       
         const helpPref = (childdata) => {
-          alert("For Transport Mode Preference, input which method of transportation you prefer out of 100.\nExample: \nCar: 15 Bike: 20 Walk: 40 \nExplanation:\nthese preferences indicate that a car trip duration of 15 minutes is equally undesireable as 20 minutes biking or 40 minutes walking");
+          alert("This section is used to input Transport Mode Preference. Type INSERT I STILL DON'T GET THIS.\nExample: \nCar: 15 Bike: 20 Walk: 40 \nExplanation:\nthis indicates that a car trip duration of 15 minutes is as enjoyable as 20 minutes biking or 40 minutes walking");
         }
       
         const helpAdd= (childdata) => {
-          alert("For Address Lookup, input an address you want the Coordinates (longitude and latitude) for.\nExample: You want to find the Coordnates for Ben Hill Griffin Stadium\nAction: you type in the address\"157 Gale Lemerand Dr, Gainesville, FL 32611\" and the correct coordinates should appear below when you click \"Address Lookup\" \nUse these values for Coordinates!");
+          alert("To lookup the longitude and latitude of an address, type in the full address you want the Coordinates (longitude and latitude) for. Click \"Find Coordinates\" and use the results in the locations section below.\n\nExample:\nYou want to find the Longitude and Latitude for Ben Hill Griffin Stadium\nAction:\n1) type in the address \"157 Gale Lemerand Dr, Gainesville, FL 32611\"\n2) click \"Find Cooridinates\" button. \nResult:\nThe coordinates [X,Y] should appear, Use these values as a location coordinate below!");
         }
 
         const helpCoord = (childdata) => {
@@ -82,7 +82,7 @@ responseDiv.appendChild(response);
     .geocode(request)
     .then((result) => {
       const { results } = result;
-      //for address lookup
+      //for Coordinate lookup
       console.log("" + results[0].formatted_address);
       setAddress(results[0].formatted_address);
       setLatLng(JSON.stringify(results[0].geometry.location, null, 2));
@@ -103,31 +103,30 @@ return (
     <div className="field1">
     <label htmlFor="add1" className = "button-help" onClick ={() =>helpPref(data)}>Transport Mode Preference</label>
       {/* show hint when hover */}
-      {/* <i class="fas fa-angle-up"></i> */}
-            <label htmlFor="car">Car:</label>
+      <label htmlFor="car">Car: <i class="fas fa-car"></i> </label>
       <input placeholder = "0-100" type="number" id="car" name="car" value={formData.car} onChange={handleChange}/>
 
-      <label htmlFor="car">Bike:</label>
+      <label htmlFor="bike">Bike: <i class="fas fa-bicycle"></i> </label>
       <input placeholder = "0-100" type="number" id="bike" name="bike" value={formData.bike} onChange={handleChange}/>
 
-      <label htmlFor="walk">Walk:</label>
+      <label htmlFor="walk">Walk: <i class="fas fa-person"></i> </label>
       <input placeholder = "0-100" type="number" id="walk" name="walk" value={formData.walk} onChange={handleChange}/>
    </div>
 
       <div className="field1">
 
-      <label htmlFor="add1" className = "button-help" onClick ={() =>helpAdd(data)}>Address Lookup</label>
+      <label htmlFor="add1" className = "button-help" onClick ={() =>helpAdd(data)}>Coordinate Finder</label>
       <textarea id="add1" placeholder="Ex: 157 Gale Lemerand Dr, Gainesville, FL 32611"  name="add1" value={formData.add1} onChange={handleChange}/>
      
     {address ?  {'Address Found' : {address}} : '' } 
     {/* Address Found:  {address} */}
     {/* above line only displays an address if it was searched  */}
-      <br></br>
 
-      <button className= "button-4" onClick ={() =>findLocation(data)}>Address Lookup</button>
+      <button className= "button-4" onClick ={() =>findLocation(data)}>Find Coordinates</button>
 
-      <br></br>
-      Longitude & Latitude Result: {LatLng}
+      {LatLng ?  {'Longitude & Latitude Found' : {LatLng}} : '' } 
+
+      {/* Longitude & Latitude Result: {LatLng} */}
  </div>
 
  <div className="field1">
@@ -136,7 +135,7 @@ return (
       <div className = "spacer"></div>
 
       <label className = "button-help" htmlFor="coord1"  onClick ={() =>helpCoord(data)}>Locations</label>
-      <label>Location #2</label>
+      <label>Location #1</label>
       <textarea id="coX"  placeholder="Longitude"  name="coX" value={formData.coX} onChange={handleChange}/>
       <textarea id="coY"  placeholder="Latitude"  name="coY" value={formData.coY} onChange={handleChange}/>
       <textarea id="freq"  placeholder="Visit(s) per week"  name="freq" value={formData.freq} onChange={handleChange}/>
@@ -146,7 +145,7 @@ return (
       <textarea id="coY1"  placeholder="Latitude"  name="coY1" value={formData.coY1} onChange={handleChange}/>
       <textarea id="freq1"  placeholder="Visit(s) per week"  name="freq1" value={formData.freq1} onChange={handleChange}/>
 
-      <label htmlFor="coord3">Location #3</label>
+      <label htmlFor="coord3">Location #3 </label>
       <textarea id="coX2"  placeholder="Longitude"  name="coX2" value={formData.coX2} onChange={handleChange}/>
       <textarea id="coY2"  placeholder="Latitude"   name="coY2" value={formData.coY2} onChange={handleChange}/>
       <textarea id="freq2"  placeholder="Visit(s) per week" name="freq2" value={formData.freq2} onChange={handleChange}/>
@@ -158,7 +157,7 @@ return (
 
       <label htmlFor="coord4">Location #5</label>
       <div>
-      <textarea id="coX4"  placeholder="Lognitude"  name="coX4" value={formData.coX4} onChange={handleChange}/>
+      <textarea id="coX4"  placeholder="Longitude"  name="coX4" value={formData.coX4} onChange={handleChange}/>
       <textarea id="coY4"  placeholder="Latitude"  name="coY4" value={formData.coY4} onChange={handleChange}/>
       <textarea id="freq4"  placeholder="Visit(s) per week"  name="freq4" value={formData.freq4} onChange={handleChange}/>
       </div>
