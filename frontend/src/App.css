@@ -58,8 +58,15 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
+  /* font-size: calc(10px + 2vmin); */
   color: white;
+}
+
+.App-header h3 {
+  font-size: 1.5em; /* Adjust as needed */
+}
+.small-text {
+  font-size: 0.8em; /* Smaller text size, adjust as needed */
 }
 
 .App-link {
@@ -239,7 +246,7 @@ textarea {
   box-shadow: rgba(27, 31, 35, 0.04) 0 1px 0, rgba(255, 255, 255, 0.25) 0 1px 0 inset;
   box-sizing: border-box;
   color: #24292E;
-  cursor: pointer;
+  /* cursor: pointer; */
   display: inline-block;
   font-family: -apple-system, system-ui, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
   font-size: 14px;
@@ -257,10 +264,31 @@ textarea {
   word-wrap: break-word;
 }
 
-.button-help:hover {
+
+
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 5px; /* Adjust as needed */
+  color: inherit; /* Use the same color as the surrounding text */
+  font-size: inherit/2; /* Use the same font size as the surrounding text */
+}
+
+/* cannot get hover to work */
+icon-button:hover {
+   color: rgb(27, 16, 16); /* Use the same color as the surrounding text */
+  font-size: inherit; /* Use the same font size as the surrounding text */
+}
+.icon-button:focus {
+  outline: none; /* Remove the focus outline */
+}
+
+/* .button-help:hover {
   text-decoration: underline;
   transition-duration: 0.1s;
-}
+} */
 
 
 /* color palette https://colorhunt.co/palette/ece3ce7390724f6f523a4d39 */

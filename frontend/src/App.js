@@ -76,7 +76,8 @@ export default function App() {
       <div className="App">
         <header className="App-header">
           <h3> <i class="fas fa-home"></i> NuCasa <i class="fas fa-map-marker-alt"></i></h3>
-          <body> <i>The perfect app for quick location triangulation! </i> </body> 
+        <i className="small-text" >The perfect app for quick location triangulation! </i> 
+
         </header>
       </div>
      

@@ -50,15 +50,19 @@ async function findLocation(data) {
         //help alerts
       
         const helpPref = (childdata) => {
-          alert("This section is used to input Transport Mode Preference. Type INSERT I STILL DON'T GET THIS.\nExample: \nCar: 15 Bike: 20 Walk: 40 \nExplanation:\nthis indicates that a car trip duration of 15 minutes is as enjoyable as 20 minutes biking or 40 minutes walking");
+          alert("This section is used to input your transport mode preference. Type in your preferences in the format shown below.\n\nExample:\nCar: 15 Bike: 20 Walk: 40\n\nExplanation:\nThis indicates that a car trip duration of 15 minutes is as enjoyable as 20 minutes biking or 40 minutes walking.");
         }
       
         const helpAdd= (childdata) => {
-          alert("To lookup the longitude and latitude of an address, type in the full address you want the Coordinates (longitude and latitude) for. Click \"Find Coordinates\" and use the results in the locations section below.\n\nExample:\nYou want to find the Longitude and Latitude for Ben Hill Griffin Stadium\nAction:\n1) type in the address \"157 Gale Lemerand Dr, Gainesville, FL 32611\"\n2) click \"Find Cooridinates\" button. \nResult:\nThe coordinates [X,Y] should appear, Use these values as a location coordinate below!");
+          alert("To look up the longitude and latitude of an address, type in the full address you want the coordinates (longitude and latitude) for. Click \"Find Coordinates\" and use the results in the locations section below.\n\nExample:\nYou want to find the longitude and latitude for Ben Hill Griffin Stadium.\nAction:\n1) Type in the address \"157 Gale Lemerand Dr, Gainesville, FL 32611\".\n2) Click the \"Find Coordinates\" button.\nResult:\nThe coordinates [29.6505, -82.3478] should appear. Use these values as a location coordinate below!");
         }
 
         const helpCoord = (childdata) => {
-          alert("For Coordinates, input the longitude, latitude and frequency of visits per week.\nExample: Ben Hill Griffin Stadium is [29.6505,-82.3478] and you go there twice a week. You shold input: [29.6505] [-82.3478] [2] in the boxes.");
+          alert("For locations, input the longitude, latitude, and frequency of visits per week.\n\nExample: Ben Hill Griffin Stadium is [29.6505, -82.3478] and you go there twice a week. You should input: [29.6505] [-82.3478] [2] in the boxes.");
+        }
+
+        const algorithmExp = (childdata) => {
+          alert("The NuCasa app allows a user to input up to five locations, along with the number of times per week they plan to visit each location, and a preference from 0-100 for driving, bicycling, and walking. Upon user submission, the app calculates the location that minimizes total transportation 'cost,' considering frequency of travel to each place and transportation preferences. This is achieved by using the Google Maps Directions service to obtain route durations to each desired destination from a large grid of potential home locations. After finding the best option in the first grid, the search is repeated on a second, smaller grid centered on the initial best location.");
         }
       
 
@@ -101,7 +105,10 @@ return (
     <div className="form-box">
     <form onSubmit={handleSubmit}>
     <div className="field1">
-    <label htmlFor="add1" className = "button-help" onClick ={() =>helpPref(data)}>Transport Mode Preference</label>
+    <label htmlFor="add1"  className = "button-help">Transport Mode Preference  
+    <button   onClick ={() =>helpPref(data)} type="button" class="icon-button" aria-label="Help">
+      <i class="fas fa-question-circle"></i>
+   </button></label>
       {/* show hint when hover */}
       <label htmlFor="car">Car: <i class="fas fa-car"></i> </label>
       <input placeholder = "0-100" type="number" id="car" name="car" value={formData.car} onChange={handleChange}/>
@@ -109,13 +116,16 @@ return (
       <label htmlFor="bike">Bike: <i class="fas fa-bicycle"></i> </label>
       <input placeholder = "0-100" type="number" id="bike" name="bike" value={formData.bike} onChange={handleChange}/>
 
-      <label htmlFor="walk">Walk: <i class="fas fa-person"></i> </label>
+      <label htmlFor="walk">Walk: <i class="fas fa-walking"></i> </label>
       <input placeholder = "0-100" type="number" id="walk" name="walk" value={formData.walk} onChange={handleChange}/>
    </div>
 
       <div className="field1">
 
-      <label htmlFor="add1" className = "button-help" onClick ={() =>helpAdd(data)}>Coordinate Finder</label>
+      <label htmlFor="add1" className = "button-help">Coordinate Finder
+      <button   onClick ={() =>helpAdd(data)} type="button" class="icon-button" aria-label="Help">
+      <i class="fas fa-question-circle"></i>
+   </button></label>
       <textarea id="add1" placeholder="Ex: 157 Gale Lemerand Dr, Gainesville, FL 32611"  name="add1" value={formData.add1} onChange={handleChange}/>
      
     {address ?  {'Address Found' : {address}} : '' } 
@@ -134,8 +144,13 @@ return (
  
       <div className = "spacer"></div>
 
-      <label className = "button-help" htmlFor="coord1"  onClick ={() =>helpCoord(data)}>Locations</label>
-      <label>Location #1</label>
+      <label className = "button-help" htmlFor="coord1">Locations
+      <button    onClick ={() =>helpCoord(data)} type="button" class="icon-button" aria-label="Help">
+      <i class="fas fa-question-circle"></i>
+   </button>
+      </label>
+
+  <label>Location #1</label>
       <textarea id="coX"  placeholder="Longitude"  name="coX" value={formData.coX} onChange={handleChange}/>
       <textarea id="coY"  placeholder="Latitude"  name="coY" value={formData.coY} onChange={handleChange}/>
       <textarea id="freq"  placeholder="Visit(s) per week"  name="freq" value={formData.freq} onChange={handleChange}/>
@@ -165,6 +180,10 @@ return (
       </div>
       <button className="button-4" type="submit">Go!</button>
       <div className = "spacer"></div>
+
+      <button  className="button-4"    onClick ={() =>algorithmExp(data)} type="button" class="icon-button" aria-label="Help">
+      How does NuCasa Work? <i class="fas fa-cogs"></i>
+   </button>
       {/* <button primary onClick={() => childToParent(data)}>Click Child</button> */}
 
     </form>
