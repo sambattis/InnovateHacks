@@ -57,7 +57,7 @@ export default function App() {
 
   const [bestX, setBestX] = useState(0)
   const [bestY, setBestY] = useState(0)
-  const key = process.env.REACT_APP_API_KEY;
+  const key = "AIzaSyDqxDeOp_BmTjMT9xAeqYa2WWamyMPLjYk";
   console.log(key);
 
   return (
@@ -66,14 +66,9 @@ export default function App() {
 
       <div className="App">
         <header className="App-header">
-<<<<<<< HEAD
-          <h3>NuCasa</h3>
-          <body> <i>The perfect app for quisck location triangulation! </i> </body> 
-=======
           <h3> <i class="fas fa-home"></i> NuCasa <i class="fas fa-map-marker-alt"></i></h3>
         <i className="small-text" >The perfect app for quick location triangulation! </i> 
 
->>>>>>> 7f3de617fdaf7223832152ae344d871bca19f28f
         </header>
       </div>
      
