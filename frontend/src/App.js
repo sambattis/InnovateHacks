@@ -7,17 +7,8 @@ import React, {useRef, useState} from "react";
 //import * as React from 'react';
 import {
   APIProvider,
-  useDirectionService,
-  useApiIsLoaded,
-  useAutocomplete,
   Marker,
   Map,
-  AdvancedMarker,
-  useDirectionsRenderer,
-useMapsLibrary,
-  Pin,
-  InfoWindow,
-  AutocompleteProps,
 } from "@vis.gl/react-google-maps"
 
 import Multiple from "./components/Form.js";
@@ -26,17 +17,15 @@ const google = window.google
 
 export default function App() {
 
-  const [selected, setSelected] = useState(null);
-
+  //const [selected, setSelected] = useState(null);
   // const position = {lat: 51, lng: 9}; 
+  // const [data, setData] = useState(10); passes all data from from to map
   const [position, setPosition] = useState({lat: 51, lng: 10});
-    // const [data, setData] = useState(10); passes all data from from to map
-  const [data, setData] = useState({car: "",walk: "",bus: "",coX: "",coY: "",coX1: "",coY1: "",coX2: "", coY2: ""});
+  const [data, setData] = useState({car: "", walk: "", bus: "", coX: "", coY: "", coX1: "", coY1: "", coX2: "", coY2: ""});
 
   const childToParent = (childdata) => {
     setData(childdata);
     findRouteHelper(data);
-    //console.log(data);
   }
 
   const [map, setMap] = useState((null))
@@ -47,9 +36,9 @@ export default function App() {
   const [bikePref, setBikePref] = useState('')
   const [walkPref, setWalkPref] = useState('')
   const [transitPref, setTransitPref] = useState('')
-  const destinationRef = useRef()
-  const originRef = useRef()
-  const travelMethodRef = useRef()
+  //const destinationRef = useRef()
+  //const originRef = useRef()
+  //const travelMethodRef = useRef()
 
   const Place = function(xCo, yCo, freq) {
     let xCo_ = xCo;
@@ -68,15 +57,17 @@ export default function App() {
 
   const [bestX, setBestX] = useState(0)
   const [bestY, setBestY] = useState(0)
+  const key = process.env.REACT_APP_API_KEY;
+  console.log(key);
 
   return (
     
-    <APIProvider apiKey = {process.env.REACT_APP_API_KEY} >
+    <APIProvider apiKey = {key} >
 
       <div className="App">
         <header className="App-header">
           <h3>NuCasa</h3>
-          <body> <i>The perfect app for quick location triangulation! </i> </body> 
+          <body> <i>The perfect app for quisck location triangulation! </i> </body> 
         </header>
       </div>
      
@@ -217,16 +208,16 @@ async function calculateStrength(xCo, yCo) {
         newList = newList.concat(PlaceOne);
       }
 
-      if (PlaceTwo.xCo_ != "" && PlaceTwo.yCo_ != "" && PlaceOne.freq_ != "") {
+      if (PlaceTwo.xCo_ !== "" && PlaceTwo.yCo_ !== "" && PlaceOne.freq_ != "") {
         console.log('reached Two');
         newList = newList.concat(PlaceTwo);
       }
-      if (PlaceThree.xCo_ != "" && PlaceThree.yCo_ != "" && PlaceThree.freq_ != "") {
+      if (PlaceThree.xCo_ !== "" && PlaceThree.yCo_ !== "" && PlaceThree.freq_ != "") {
         console.log('reached Three');
         newList = newList.concat(PlaceThree);
       }
 
-      if (PlaceFour.xCo_ != "" && PlaceFour.yCo_ != "" && PlaceFour.freq_ != "") {
+      if (PlaceFour.xCo_ !== "" && PlaceFour.yCo_ !== "" && PlaceFour.freq_ != "") {
         console.log('reached Four');
         newList = newList.concat(PlaceFour);
       }
