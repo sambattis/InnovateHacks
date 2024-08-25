@@ -21,15 +21,13 @@ const google = window.google
 
 //Worst case handle api with form and save ideal location locally! & pull it down from local storage 
 
-export default function Multiple({childToParent}){
+export default function Form({data, setData}){
   const [formData, setFormData] = useState({car: "",walk: "",bike: "",coX: "",coY: "",freq: "",coX1: "",coY1: "", freq1: "", coX2: "", coY2: "", freq2: "", coX3: "", coY3: "", freq3: "", coX4: "", coY4: "", freq4: ""});
   //const [formData, setFormData] = useState({car: "",walk: "",transit: "",bike: "",coX: "",coY: "",coX1: "",coY1: "",coX2: "", coY2: ""});
   const [LatLng, setLatLng] = useState();
   const [address, setAddress] = useState();
 
 //   const data = "This is data from Child Component to the Parent Component."
-
-  const [data, setData] = useState(formData);
 
 
   const handleChange = (event) => {
@@ -39,8 +37,8 @@ export default function Multiple({childToParent}){
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    console.log(formData.coX1, formData.coY1);
     setData(formData);
-    childToParent(data);
 };
 
 async function findLocation(data) {
@@ -184,7 +182,6 @@ return (
       <button  className="button-4"    onClick ={() =>algorithmExp(data)} type="button" class="icon-button" aria-label="Help">
       How does NuCasa Work? <i class="fas fa-cogs"></i>
    </button>
-      {/* <button primary onClick={() => childToParent(data)}>Click Child</button> */}
 
     </form>
     </div>
