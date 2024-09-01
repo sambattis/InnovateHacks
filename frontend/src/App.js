@@ -3,7 +3,8 @@ import {createRoot} from 'react-dom/client';
 import './App.css';
 import { v4 as uuidv4 } from 'uuid';
 
-import React, {useRef, useState} from "react";
+
+import React, {useRef, useState, useEffect} from "react";
 //import * as React from 'react';
 import {
   APIProvider,
@@ -11,34 +12,14 @@ import {
   Map,
 } from "@vis.gl/react-google-maps"
 
-import Multiple from "./components/Form.js";
 
-const google = window.google
+import Form from "./components/Form.js";
 
 export default function App() {
-
-  //const [selected, setSelected] = useState(null);
-  // const position = {lat: 51, lng: 9}; 
-  // const [data, setData] = useState(10); passes all data from from to map
   const [position, setPosition] = useState({lat: 51, lng: 10});
   const [data, setData] = useState({car: "", walk: "", bus: "", coX: "", coY: "", coX1: "", coY1: "", coX2: "", coY2: ""});
 
-  const childToParent = (childdata) => {
-    setData(childdata);
-    findRouteHelper(data);
-  }
-
   const [map, setMap] = useState((null))
-  const [dResponse, setDResponse] = useState(null)
-  const [travelTime, setTravelTime] = useState('')
-  const [distance, setDistance] = useState('')
-  const [drivingPref, setDrivingPref] = useState('')
-  const [bikePref, setBikePref] = useState('')
-  const [walkPref, setWalkPref] = useState('')
-  const [transitPref, setTransitPref] = useState('')
-  //const destinationRef = useRef()
-  //const originRef = useRef()
-  //const travelMethodRef = useRef()
 
   const Place = function(xCo, yCo, freq) {
     let xCo_ = xCo;
@@ -47,93 +28,150 @@ export default function App() {
     return { xCo_, yCo_, freq_ };
   };
 
-  const [PlaceOne, setPlaceOne] = useState(null)
-  const [PlaceTwo, setPlaceTwo] = useState(null)
-  const [PlaceThree, setPlaceThree] = useState(null)
-  const [PlaceFour, setPlaceFour] = useState(null)
-  const [PlaceFive, setPlaceFive] = useState(null)
-
-  const [list, setList] = useState([])
 
   const [bestX, setBestX] = useState(0)
   const [bestY, setBestY] = useState(0)
-  const key = "AIzaSyDqxDeOp_BmTjMT9xAeqYa2WWamyMPLjYk";
+  const key = process.env.REACT_APP_API_KEY;
   console.log(key);
 
-  return (
-    
-    <APIProvider apiKey = {key} >
+  const loadGoogleMapsScript = () => {
+    return new Promise((resolve, reject) => {
+      if (window.google && window.google.maps) {
+        resolve();
+      } else {
+        const script = document.createElement("script");
+        script.src = `https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places`;
+        script.async = true;
+        script.defer = true;
+        script.onload = () => {
+          if (window.google && window.google.maps) {
+            resolve();
+          } else {
+            reject("Google Maps API failed to load");
+          }
+        };
+        script.onerror = () => {
+          reject("Google Maps script failed to load");
+        };
+        document.head.appendChild(script);
+      }
+    });
+  };
 
+  loadGoogleMapsScript()
+    .then(() => {
+      console.log("Google Maps script loaded successfully");
+      // Now you can safely access google.maps
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+
+    const google = window.google
+
+  useEffect (() => {
+    console.log('You should live at');
+    console.log(bestX);
+    console.log(bestY);
+    console.log({lat: bestX, lng:bestY});
+    setPosition({lat: bestX, lng:bestY});
+  }, [bestY])
+
+
+
+
+ useEffect (() => {
+   startCalcs(data);
+ }, [data])
+
+
+  return (
+    <APIProvider apiKey = {key} onLoad={() => console.log('Maps API has loaded.')}>
       <div className="App">
         <header className="App-header">
           <h3> <i class="fas fa-home"></i> NuCasa <i class="fas fa-map-marker-alt"></i></h3>
-        <i className="small-text" >The perfect app for quick location triangulation! </i> 
-
+        <i className="small-text" >The perfect app for quick location triangulation! </i>
         </header>
       </div>
-     
       <div className="split left-panel ">
-        <Multiple childToParent={childToParent}/>
-          <p>{childToParent}</p>
-          <button className = "hide" primary onClick={() => childToParent(data)}>Click Child</button> 
+        <Form data={data} setData={setData}/>
       </div>
-
-
       <div className="split right-panel " style = {{height: "95vh"} }>
         <Map zoom = {9} center = {position} onLoad={map => setMap(map)}>
-        {dResponse && (
-            <useDirectionsRenderer directions={dResponse} />
-          )}
         <Marker position={position} />
         </Map>
       </div>
     </APIProvider>
-    
+   
   );
-//onLoad={map => setMap(map)}
-//need to hide the childtoparent button
 
 
+  async function startCalcs(data) {
+    let placeOne = (Place(data.coX, data.coY, data.freq));
+    let placeTwo = Place(data.coX1, data.coY1, data.freq1);
+    let placeThree = Place(data.coX2, data.coY2, data.freq2);
+    let placeFour = Place(data.coX3, data.coY3, data.freq3);
+    let placeFive = (Place(data.coX4, data.coY4, data.freq4));
+    let minX = 90;
+    let maxX = -90;
+    let minY = 90;
+    let maxY = -90;
+   
+    let newList = [];
+    if (placeOne.xCo_ != "" && placeOne.yCo_ != "" && placeOne.freq_ !== "") {
+      console.log('reached One');
+      newList = newList.concat(placeOne);
+    }
 
-async function calculateStrength(xCo, yCo) {
-  let totalScore = 0;
-  //console.log(xCo);
-  let dScore = 99999;
-  let bScore = 99999;
-  let wScore = 99999;
-  //console.log(yCo);
-  for (let i = 0; i < list.length; i++) {
-    //console.log((await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'DRIVING')));
-    dScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'DRIVING')) * parseFloat(drivingPref);
-    bScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'BICYCLING')) * parseFloat(bikePref);
-    wScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'WALKING')) * parseFloat(walkPref);
-    //setTScore(findRoute(xCo, yCo, PlaceOne.xCo_,PlaceOne.yCo_, 'TRANSIT') * transitPref);
-    //console.log(parseFloat(dScore));
-    //console.log(bScore);
-    //console.log(wScore);
-    let bestScore = 0;
-    if (dScore < bScore && dScore < wScore) {
-      bestScore = dScore;
+
+    if (placeTwo.xCo_ !== "" && placeTwo.yCo_ !== "" && placeTwo.freq_ !== "") {
+      console.log('reached Two');
+      newList = newList.concat(placeTwo);
     }
-    if (bScore < dScore && bScore < wScore) {
-      bestScore = bScore;
+    if (placeThree.xCo_ !== "" && placeThree.yCo_ !== "" && placeThree.freq_ !== "") {
+      console.log('reached Three');
+      newList = newList.concat(placeThree);
     }
-    if (wScore < bScore && wScore < dScore) {
-      bestScore = wScore;
+
+
+    if (placeFour.xCo_ !== "" && placeFour.yCo_ !== "" && placeFour.freq_ !== "") {
+      console.log('reached Four');
+      newList = newList.concat(placeFour);
     }
-    //console.log(bestScore);
-    let curScore = parseFloat(bestScore) * parseFloat(list[i].freq_);
-    //console.log(totalScore);
-   // console.log(curScore);
-    //console.log(parseFloat(curScore));
-    totalScore += parseFloat(curScore);
-    //console.log(totalScore);
+
+
+    if (placeFive.xCo_ != "" && placeFive.yCo_ !== "" && placeFive.freq_ !== "") {
+      console.log('reached Five');
+      newList = newList.concat(placeFive);
+    }
+   
+    const list = newList;
+    console.log(list);
+    for (let i = 0; i < list.length; i++) {
+      if (list[i].xCo_ > maxX) {
+        maxX = list[i].xCo_;
+      }
+      if (list[i].xCo_ < minX) {
+        minX = list[i].xCo_;
+      }
+      if (list[i].yCo_ > maxY) {
+        maxY = list[i].yCo_;
+      }
+      if (list[i].yCo_ < minY) {
+         minY = list[i].yCo_;
+      }
+    }
+    console.log(maxX);
+    console.log(maxY);
+    console.log(minX);
+    console.log(minY);
+
+
+    await findBestHome(minX, maxX, minY, maxY, list);
+   
   }
-  //console.log(totalScore);
- return totalScore;
-}
-    
-    async function findBestHome(minX, maxX, minY, maxY) {
+   
+    async function findBestHome(minX, maxX, minY, maxY, list) {
       let bestScore = 99999999;
       let it = 0;
       let firstBestX;
@@ -143,11 +181,12 @@ async function calculateStrength(xCo, yCo) {
       while (it < 5) {
         let it1 = 0;
         while (it1 < 5) {
-          let testVal = await calculateStrength(parseFloat(minX) + it * parseFloat(xDiff), parseFloat(minY) + it1 * parseFloat(yDiff));
+          let testVal = await calculateStrength(parseFloat(minX) + it * parseFloat(xDiff), parseFloat(minY) + it1 * parseFloat(yDiff), list);
            //console.log(testVal);
           if (testVal < bestScore) {
             //console.log("improved")
             bestScore = testVal;
+
 
             firstBestX = parseFloat(minX) + it *(maxX-minX)/5;
             firstBestY = parseFloat(minY) + it1 * (maxY-minY)/5;
@@ -168,7 +207,7 @@ async function calculateStrength(xCo, yCo) {
       while (it < 5) {
         let it1 = 0;
         while (it1 < 5) {
-          let testVal = await calculateStrength(parseFloat(newMinX) + it * parseFloat(xDiff), parseFloat(newMinY) + it1 * (parseFloat(yDiff)));
+          let testVal = await calculateStrength(parseFloat(newMinX) + it * parseFloat(xDiff), parseFloat(newMinY) + it1 * (parseFloat(yDiff)), list);
            //console.log(testVal);
            //console.log(bestScore);
           if (parseFloat(testVal) < parseFloat(bestScore)) {
@@ -177,7 +216,7 @@ async function calculateStrength(xCo, yCo) {
             firstBestX = parseFloat(newMinX) + it * parseFloat(xDiff);
             firstBestY = parseFloat(newMinY) + it1 * parseFloat(yDiff);
             //console.log(parseFloat(newMinX) + it * parseFloat(xDiff));
-            
+           
           }
           it1++;
         }
@@ -189,75 +228,43 @@ async function calculateStrength(xCo, yCo) {
       setBestY(parseFloat(firstBestY));
     }
 
-    async function findRouteHelper(data) {
-      let minX = 90;
-      let maxX = -90;
-      let minY = 90;
-      let maxY = -90;
-      setBikePref(data.bike);
-      setWalkPref(data.walk);
-      setDrivingPref(data.car);
-      setTransitPref(data.transit);
-      setPlaceOne(Place(data.coX, data.coY, data.freq));
-      setPlaceTwo(Place(data.coX1, data.coY1, data.freq1));
-      setPlaceThree(Place(data.coX2, data.coY2, data.freq2));
-      setPlaceFour(Place(data.coX3, data.coY3, data.freq3));
-      setPlaceFive(Place(data.coX4, data.coY4, data.freq4));
-      let newList = [];
-      if (PlaceOne.xCo_ != "" && PlaceOne.yCo_ != "" && PlaceOne.freq_ != "") {
-        console.log('reached One');
-        newList = newList.concat(PlaceOne);
-      }
 
-      if (PlaceTwo.xCo_ !== "" && PlaceTwo.yCo_ !== "" && PlaceOne.freq_ != "") {
-        console.log('reached Two');
-        newList = newList.concat(PlaceTwo);
-      }
-      if (PlaceThree.xCo_ !== "" && PlaceThree.yCo_ !== "" && PlaceThree.freq_ != "") {
-        console.log('reached Three');
-        newList = newList.concat(PlaceThree);
-      }
-
-      if (PlaceFour.xCo_ !== "" && PlaceFour.yCo_ !== "" && PlaceFour.freq_ != "") {
-        console.log('reached Four');
-        newList = newList.concat(PlaceFour);
-      }
-
-      if (PlaceFive.xCo_ != "" && PlaceFive.yCo_ != "" && PlaceFive.freq_ != "") {
-        console.log('reached Five');
-        newList = newList.concat(PlaceFive);
-      }
-      
-      const finalNewList = newList;
-      setList(finalNewList);
-
-      console.log(list);
+    async function calculateStrength(xCo, yCo, list) {
+      let bikePref = data.bike;
+      let walkPref = data.walk;
+      let drivingPref = data.car;
+      let totalScore = 0;
+      //console.log(xCo);
+      let dScore = 99999;
+      let bScore = 99999;
+      let wScore = 99999;
+      //console.log(yCo);
       for (let i = 0; i < list.length; i++) {
-        if (list[i].xCo_ > maxX) {
-          maxX = list[i].xCo_;
+        //console.log((await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'DRIVING')));
+        dScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'DRIVING')) * parseFloat(drivingPref);
+        bScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'BICYCLING')) * parseFloat(bikePref);
+        wScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'WALKING')) * parseFloat(walkPref);
+        //setTScore(findRoute(xCo, yCo, placeOne.xCo_,placeOne.yCo_, 'TRANSIT') * transitPref);
+        //console.log(parseFloat(dScore));
+        //console.log(bScore);
+        //console.log(wScore);
+        let bestScore = 0;
+        if (dScore < bScore && dScore < wScore) {
+          bestScore = dScore;
         }
-        if (list[i].xCo_ < minX) {
-          minX = list[i].xCo_;
+        if (bScore < dScore && bScore < wScore) {
+          bestScore = bScore;
         }
-        if (list[i].yCo_ > maxY) {
-          maxY = list[i].yCo_;
+        if (wScore < bScore && wScore < dScore) {
+          bestScore = wScore;
         }
-        if (list[i].yCo_ < minY) {
-           minY = list[i].yCo_;
-        }
+        let curScore = parseFloat(bestScore) * parseFloat(list[i].freq_);
+        totalScore += parseFloat(curScore);
+        //console.log(totalScore);
       }
-      console.log(maxX);
-      console.log(maxY);
-      console.log(minX);
-      console.log(minY);
-
-      await findBestHome(minX, maxX, minY, maxY);
-      console.log('You should live at');
-      console.log(bestX);
-      console.log(bestY);
-      console.log({lat: bestX, lng:bestY});
-      setPosition({lat: bestX, lng:bestY});
+     return totalScore;
     }
+
 
   function parseTime(inputString) {
     let regex = /(\d+) hours (\d+) mins/;
@@ -288,6 +295,7 @@ async function calculateStrength(xCo, yCo) {
                   match = inputString.match(regex);
                   if (!match) {
 
+
                   } else {
                     hours = 0;
                     mins = parseInt(match[1], 10);
@@ -302,7 +310,7 @@ async function calculateStrength(xCo, yCo) {
               }
             } else {
               hours = parseInt(match[1], 10); //error occurs at deepest point every time
-              mins = parseInt(match[2], 10); 
+              mins = parseInt(match[2], 10);
             }
           } else {
             hours = parseInt(match[1], 10);
@@ -320,20 +328,22 @@ async function calculateStrength(xCo, yCo) {
       hours = parseInt(match[1], 10);
       mins = parseInt(match[2], 10);
     }
-    
+   
     let result = hours + mins / 60;
     return result;
   }
 
+
   async function findRoute(xCo, yCo, xCo1, yCo1, method) {
-    
+   
     //console.log(xCo)
     //console.log(yCo)
-    const {DirectionsService} = await google.maps.importLibrary("routes") 
+    const {DirectionsService} = await google.maps.importLibrary("routes")
     const dService = new DirectionsService() //added() here idk why it worked
 
     const origin1 = new google.maps.LatLng(xCo, yCo)
     const destination1 = new google.maps.LatLng(xCo1, yCo1)
+
 
     const result = await dService.route({
       origin: origin1,
@@ -341,23 +351,32 @@ async function calculateStrength(xCo, yCo) {
       travelMode: method,
     })
 
-    setDistance(result.routes[0].legs[0].distance.text)
-    setTravelTime(result.routes[0].legs[0].duration.text)
+
+    //setDistance(result.routes[0].legs[0].distance.text)
+    //setTravelTime(result.routes[0].legs[0].duration.text)
     //parse time string and turn into double
     let time = parseTime(result.routes[0].legs[0].duration.text)
     // /console.log(time)
     //console.log(distance)
-    //console.log(result.routes[0].legs[0].duration.text) 
+    //console.log(result.routes[0].legs[0].duration.text)
     return time
   }
 }
+
+
 
 
 window.App= App;
 
 
 
-/*  function useDirectionsRenderer({dService}) {
+
+
+
+/*  
+
+
+function useDirectionsRenderer({dService}) {
     const isLoaded  = useApiIsLoaded({
       googleMapsApiKey: process.env.REACT_APP_API_KEY,
       libraries: ["places"],
@@ -366,7 +385,8 @@ window.App= App;
    
     const position2 = new google.maps.LatLng(53.5, 9.8);
 
-    
+
+   
     const directionsRenderer = useMapsLibrary('directionsRenderer');
     directionsRenderer.setMap(map);
     const request = dService.route({
@@ -380,3 +400,4 @@ window.App= App;
       }
     });
   }*/
+
