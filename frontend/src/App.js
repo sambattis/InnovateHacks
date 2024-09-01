@@ -69,20 +69,20 @@ export default function App() {
     const google = window.google
 
   useEffect (() => {
-    if (data.xCo) {
+
       console.log('You should live at');
       console.log(bestX);
       console.log(bestY);
       console.log({lat: bestX, lng:bestY});
       setPosition({lat: bestX, lng:bestY});
-    }
+  
   }, [bestY])
 
  useEffect (() => {
    //if at least two locations in data
-   if (data.xCo) {
+    console.log(data);
     startCalcs(data);
-   }
+   
  }, [data])
 
   return (
@@ -166,6 +166,7 @@ export default function App() {
   }
    
     async function findBestHome(minX, maxX, minY, maxY, list) {
+      console.log('find Best');
       let bestScore = 99999999;
       let it = 0;
       let firstBestX;
@@ -205,11 +206,13 @@ export default function App() {
         }
         it++;
       }
+      console.log('set best');
       setBestX(parseFloat(firstBestX));
       setBestY(parseFloat(firstBestY));
     }
 
     async function calculateStrength(xCo, yCo, list) {
+      console.log('calc cstrength');
       let bikePref = data.bike;
       let walkPref = data.walk;
       let drivingPref = data.car;
@@ -321,9 +324,6 @@ export default function App() {
     return time
   }
 }
-
-
-
 
 window.App= App;
 
