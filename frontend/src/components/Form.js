@@ -1,6 +1,6 @@
 import { useState } from "react";
 import '../App.css';
-
+import { v4 as uuidv4 } from 'uuid'; // Correct import
 import {
   APIProvider,
   useDirectionService,
@@ -23,6 +23,8 @@ const google = window.google
 
 export default function Multiple({childToParent}){
   const [formData, setFormData] = useState({car: "",walk: "",bike: "",coX: "",coY: "",freq: "",coX1: "",coY1: "", freq1: "", coX2: "", coY2: "", freq2: "", coX3: "", coY3: "", freq3: "", coX4: "", coY4: "", freq4: ""});
+   //const [formData, setFormData] = useState({car: "",walk: "",transit: "",places[]});
+
   //const [formData, setFormData] = useState({car: "",walk: "",transit: "",bike: "",coX: "",coY: "",coX1: "",coY1: "",coX2: "", coY2: ""});
   const [LatLng, setLatLng] = useState();
   const [address, setAddress] = useState();
@@ -46,6 +48,31 @@ export default function Multiple({childToParent}){
 async function findLocation(data) {
   let response = geocode({ address: data.add1 });
 }
+
+
+const [places, setPlaces] = useState([
+  { id: uuidv4(), xCo: "", yCo: "", freq: "" }
+]); // Initially one place
+
+
+// Function to handle input changes for coordinates and frequency
+const handlePlaceChange = (index, field, value) => {
+  const updatedPlaces = [...places];
+  updatedPlaces[index][field] = value;
+  setPlaces(updatedPlaces);
+
+  //now I need to place changes to change the other handler
+  
+  
+
+};
+
+  // Function to add more locations dynamically
+  const addLocation = () => {
+    setPlaces([...places, { id: uuidv4(), xCo: "", yCo: "", freq: "" }]);
+  };
+
+const [list, setList] = useState([]);
 
         //help alerts
       
@@ -100,6 +127,8 @@ responseDiv.appendChild(response);
     });
 
 
+    
+
 }
 return (
     <div className="form-box">
@@ -149,6 +178,32 @@ return (
       <i class="fas fa-question-circle"></i>
    </button>
       </label>
+
+      {places.map((place, index) => (
+            <div key={place.id}>
+              <p>Location #{index+1}</p>
+              <input
+                type="number"
+                placeholder="X Coordinate"
+                value={place.xCo}
+                onChange={(e) => handlePlaceChange(index, "xCo", e.target.value)}
+              />
+              <input
+                type="number"
+                placeholder="Y Coordinate"
+                value={place.yCo}
+                onChange={(e) => handlePlaceChange(index, "yCo", e.target.value)}
+              />
+              <input
+                type="number"
+                placeholder="Frequency"
+                value={place.freq}
+                onChange={(e) => handlePlaceChange(index, "freq", e.target.value)}
+              />
+            </div>
+          ))}
+          <button onClick={addLocation}>Add Another Location</button>
+        
 
   <label>Location #1</label>
       <textarea id="coX"  placeholder="Longitude"  name="coX" value={formData.coX} onChange={handleChange}/>
