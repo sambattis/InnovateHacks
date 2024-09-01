@@ -28,7 +28,6 @@ export default function App() {
     return { xCo_, yCo_, freq_ };
   };
 
-
   const [bestX, setBestX] = useState(0)
   const [bestY, setBestY] = useState(0)
   const key = process.env.REACT_APP_API_KEY;
@@ -70,20 +69,21 @@ export default function App() {
     const google = window.google
 
   useEffect (() => {
-    console.log('You should live at');
-    console.log(bestX);
-    console.log(bestY);
-    console.log({lat: bestX, lng:bestY});
-    setPosition({lat: bestX, lng:bestY});
+    if (data.xCo) {
+      console.log('You should live at');
+      console.log(bestX);
+      console.log(bestY);
+      console.log({lat: bestX, lng:bestY});
+      setPosition({lat: bestX, lng:bestY});
+    }
   }, [bestY])
 
-
-
-
  useEffect (() => {
-   startCalcs(data);
+   //if at least two locations in data
+   if (data.xCo) {
+    startCalcs(data);
+   }
  }, [data])
-
 
   return (
     <APIProvider apiKey = {key} onLoad={() => console.log('Maps API has loaded.')}>
@@ -122,8 +122,6 @@ export default function App() {
       console.log('reached One');
       newList = newList.concat(placeOne);
     }
-
-
     if (placeTwo.xCo_ !== "" && placeTwo.yCo_ !== "" && placeTwo.freq_ !== "") {
       console.log('reached Two');
       newList = newList.concat(placeTwo);
@@ -132,14 +130,10 @@ export default function App() {
       console.log('reached Three');
       newList = newList.concat(placeThree);
     }
-
-
     if (placeFour.xCo_ !== "" && placeFour.yCo_ !== "" && placeFour.freq_ !== "") {
       console.log('reached Four');
       newList = newList.concat(placeFour);
     }
-
-
     if (placeFive.xCo_ != "" && placeFive.yCo_ !== "" && placeFive.freq_ !== "") {
       console.log('reached Five');
       newList = newList.concat(placeFive);
@@ -182,12 +176,8 @@ export default function App() {
         let it1 = 0;
         while (it1 < 5) {
           let testVal = await calculateStrength(parseFloat(minX) + it * parseFloat(xDiff), parseFloat(minY) + it1 * parseFloat(yDiff), list);
-           //console.log(testVal);
           if (testVal < bestScore) {
-            //console.log("improved")
             bestScore = testVal;
-
-
             firstBestX = parseFloat(minX) + it *(maxX-minX)/5;
             firstBestY = parseFloat(minY) + it1 * (maxY-minY)/5;
           }
@@ -199,8 +189,6 @@ export default function App() {
       let newMaxX = parseFloat(firstBestX) + 0.5 * ((parseFloat(maxX)-parseFloat(minX))/5);
       let newMinY = parseFloat(firstBestY) - 0.5 * ((parseFloat(maxY)-parseFloat(minY))/5);
       let newMaxY = parseFloat(firstBestY) + 0.5 * ((parseFloat(maxY)-parseFloat(minY))/5);
-      //console.log(newMaxY);
-      //console.log(newMinY);
       xDiff = (parseFloat(newMaxX)-parseFloat(newMinX))/5;
       yDiff = (parseFloat(newMaxY)-parseFloat(newMinY))/5;
       it = 0;
@@ -208,46 +196,32 @@ export default function App() {
         let it1 = 0;
         while (it1 < 5) {
           let testVal = await calculateStrength(parseFloat(newMinX) + it * parseFloat(xDiff), parseFloat(newMinY) + it1 * (parseFloat(yDiff)), list);
-           //console.log(testVal);
-           //console.log(bestScore);
           if (parseFloat(testVal) < parseFloat(bestScore)) {
-            //console.log("improved")
             bestScore = testVal;
             firstBestX = parseFloat(newMinX) + it * parseFloat(xDiff);
             firstBestY = parseFloat(newMinY) + it1 * parseFloat(yDiff);
-            //console.log(parseFloat(newMinX) + it * parseFloat(xDiff));
-           
           }
           it1++;
         }
         it++;
       }
-      //console.log(firstBestX);
-      //console.log(firstBestY);
       setBestX(parseFloat(firstBestX));
       setBestY(parseFloat(firstBestY));
     }
-
 
     async function calculateStrength(xCo, yCo, list) {
       let bikePref = data.bike;
       let walkPref = data.walk;
       let drivingPref = data.car;
       let totalScore = 0;
-      //console.log(xCo);
       let dScore = 99999;
       let bScore = 99999;
       let wScore = 99999;
-      //console.log(yCo);
       for (let i = 0; i < list.length; i++) {
-        //console.log((await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'DRIVING')));
         dScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'DRIVING')) * parseFloat(drivingPref);
         bScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'BICYCLING')) * parseFloat(bikePref);
         wScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'WALKING')) * parseFloat(walkPref);
         //setTScore(findRoute(xCo, yCo, placeOne.xCo_,placeOne.yCo_, 'TRANSIT') * transitPref);
-        //console.log(parseFloat(dScore));
-        //console.log(bScore);
-        //console.log(wScore);
         let bestScore = 0;
         if (dScore < bScore && dScore < wScore) {
           bestScore = dScore;
@@ -260,11 +234,9 @@ export default function App() {
         }
         let curScore = parseFloat(bestScore) * parseFloat(list[i].freq_);
         totalScore += parseFloat(curScore);
-        //console.log(totalScore);
       }
      return totalScore;
     }
-
 
   function parseTime(inputString) {
     let regex = /(\d+) hours (\d+) mins/;
@@ -294,8 +266,6 @@ export default function App() {
                   regex = /(\d+) mins/;
                   match = inputString.match(regex);
                   if (!match) {
-
-
                   } else {
                     hours = 0;
                     mins = parseInt(match[1], 10);
@@ -335,15 +305,11 @@ export default function App() {
 
 
   async function findRoute(xCo, yCo, xCo1, yCo1, method) {
-   
-    //console.log(xCo)
-    //console.log(yCo)
     const {DirectionsService} = await google.maps.importLibrary("routes")
     const dService = new DirectionsService() //added() here idk why it worked
 
     const origin1 = new google.maps.LatLng(xCo, yCo)
     const destination1 = new google.maps.LatLng(xCo1, yCo1)
-
 
     const result = await dService.route({
       origin: origin1,
@@ -351,14 +317,7 @@ export default function App() {
       travelMode: method,
     })
 
-
-    //setDistance(result.routes[0].legs[0].distance.text)
-    //setTravelTime(result.routes[0].legs[0].duration.text)
-    //parse time string and turn into double
     let time = parseTime(result.routes[0].legs[0].duration.text)
-    // /console.log(time)
-    //console.log(distance)
-    //console.log(result.routes[0].legs[0].duration.text)
     return time
   }
 }
