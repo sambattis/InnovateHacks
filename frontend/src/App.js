@@ -17,15 +17,15 @@ import Form from "./components/Form.js";
 
 export default function App() {
   const [position, setPosition] = useState({lat: 51, lng: 10});
-  const [data, setData] = useState({car: "", walk: "", bus: "", coX: "", coY: "", coX1: "", coY1: "", coX2: "", coY2: ""});
+  const [data, setData] = useState({prefs: {}, places: []});
 
   const [map, setMap] = useState((null))
 
-  const Place = function(xCo, yCo, freq) {
-    let xCo_ = xCo;
-    let yCo_ = yCo;
-    let freq_ = freq;
-    return { xCo_, yCo_, freq_ };
+  const Place = function(xCo_, yCo_, freq_) {
+    let xCo = xCo_;
+    let yCo = yCo_;
+    let freq = freq_;
+    return { xCo, yCo, freq };
   };
 
   const [bestX, setBestX] = useState(0)
@@ -69,20 +69,26 @@ export default function App() {
     const google = window.google
 
   useEffect (() => {
-
-      console.log('You should live at');
-      console.log(bestX);
-      console.log(bestY);
-      console.log({lat: bestX, lng:bestY});
-      setPosition({lat: bestX, lng:bestY});
-  
-  }, [bestY])
+    if (data.prefs && data.places.length > 1) {
+      if (data.prefs.bike && data.prefs.walk && data.prefs.car) {
+        console.log('You should live at');
+        console.log(bestX);
+        console.log(bestY);
+        console.log({lat: bestX, lng:bestY});
+        setPosition({lat: bestX, lng:bestY});
+      }
+    }
+    }, [bestY])
 
  useEffect (() => {
    //if at least two locations in data
-    console.log(data);
-    startCalcs(data);
-   
+   console.log(data);
+    if (data.prefs && data.places.length > 1) {
+      if (data.prefs.bike && data.prefs.walk && data.prefs.car) {
+        console.log('start calcs');
+        startCalcs(data);
+      }
+    }
  }, [data])
 
   return (
@@ -106,63 +112,50 @@ export default function App() {
   );
 
 
-  async function startCalcs(data) {
-    let placeOne = (Place(data.coX, data.coY, data.freq));
-    let placeTwo = Place(data.coX1, data.coY1, data.freq1);
-    let placeThree = Place(data.coX2, data.coY2, data.freq2);
-    let placeFour = Place(data.coX3, data.coY3, data.freq3);
-    let placeFive = (Place(data.coX4, data.coY4, data.freq4));
+  async function startCalcs(data) { //now passes in places only and not prefs 
     let minX = 90;
     let maxX = -90;
     let minY = 90;
     let maxY = -90;
+    let places = data.places;
+    console.log(places);
    
     let newList = [];
-    if (placeOne.xCo_ != "" && placeOne.yCo_ != "" && placeOne.freq_ !== "") {
-      console.log('reached One');
-      newList = newList.concat(placeOne);
+    let i = 0;
+    console.log(places.length);
+    while (i<places.length){
+      console.log(places[i].xCo);
+      if (places[i].xCo != "" && places[i].yCo != "" && places[i].freq !== "") {
+        let placeOne = (Place(places[i].xCo, places[i].yCo, places[i].freq));
+        newList = newList.concat(placeOne);
+        console.log('added:'+newList.lastIndex);
+      }
+      i++;
     }
-    if (placeTwo.xCo_ !== "" && placeTwo.yCo_ !== "" && placeTwo.freq_ !== "") {
-      console.log('reached Two');
-      newList = newList.concat(placeTwo);
-    }
-    if (placeThree.xCo_ !== "" && placeThree.yCo_ !== "" && placeThree.freq_ !== "") {
-      console.log('reached Three');
-      newList = newList.concat(placeThree);
-    }
-    if (placeFour.xCo_ !== "" && placeFour.yCo_ !== "" && placeFour.freq_ !== "") {
-      console.log('reached Four');
-      newList = newList.concat(placeFour);
-    }
-    if (placeFive.xCo_ != "" && placeFive.yCo_ !== "" && placeFive.freq_ !== "") {
-      console.log('reached Five');
-      newList = newList.concat(placeFive);
-    }
-   
+
     const list = newList;
     console.log(list);
     for (let i = 0; i < list.length; i++) {
-      if (list[i].xCo_ > maxX) {
-        maxX = list[i].xCo_;
+      if (list[i].xCo > maxX) {
+        maxX = list[i].xCo;
       }
-      if (list[i].xCo_ < minX) {
-        minX = list[i].xCo_;
+      if (list[i].xCo < minX) {
+        minX = list[i].xCo;
       }
-      if (list[i].yCo_ > maxY) {
-        maxY = list[i].yCo_;
+      if (list[i].yCo > maxY) {
+        maxY = list[i].yCo;
       }
-      if (list[i].yCo_ < minY) {
-         minY = list[i].yCo_;
+      if (list[i].yCo < minY) {
+         minY = list[i].yCo;
       }
     }
     console.log(maxX);
     console.log(maxY);
     console.log(minX);
     console.log(minY);
-
+    console.log(list);
 
     await findBestHome(minX, maxX, minY, maxY, list);
-   
   }
    
     async function findBestHome(minX, maxX, minY, maxY, list) {
@@ -177,6 +170,7 @@ export default function App() {
         let it1 = 0;
         while (it1 < 5) {
           let testVal = await calculateStrength(parseFloat(minX) + it * parseFloat(xDiff), parseFloat(minY) + it1 * parseFloat(yDiff), list);
+          //console.log(testVal);
           if (testVal < bestScore) {
             bestScore = testVal;
             firstBestX = parseFloat(minX) + it *(maxX-minX)/5;
@@ -209,21 +203,22 @@ export default function App() {
       console.log('set best');
       setBestX(parseFloat(firstBestX));
       setBestY(parseFloat(firstBestY));
+      console.log(firstBestX);
     }
 
     async function calculateStrength(xCo, yCo, list) {
-      console.log('calc cstrength');
-      let bikePref = data.bike;
-      let walkPref = data.walk;
-      let drivingPref = data.car;
+      console.log("calcStrength");
+      let bikePref = data.prefs.bike;
+      let walkPref = data.prefs.walk;
+      let drivingPref = data.prefs.car;
       let totalScore = 0;
       let dScore = 99999;
       let bScore = 99999;
       let wScore = 99999;
       for (let i = 0; i < list.length; i++) {
-        dScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'DRIVING')) * parseFloat(drivingPref);
-        bScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'BICYCLING')) * parseFloat(bikePref);
-        wScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo_,list[i].yCo_, 'WALKING')) * parseFloat(walkPref);
+        dScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo, list[i].yCo, 'DRIVING')) * parseFloat(drivingPref);
+        bScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo, list[i].yCo, 'BICYCLING')) * parseFloat(bikePref);
+        wScore = parseFloat(await findRoute(xCo, yCo, list[i].xCo, list[i].yCo, 'WALKING')) * parseFloat(walkPref);
         //setTScore(findRoute(xCo, yCo, placeOne.xCo_,placeOne.yCo_, 'TRANSIT') * transitPref);
         let bestScore = 0;
         if (dScore < bScore && dScore < wScore) {
@@ -235,7 +230,7 @@ export default function App() {
         if (wScore < bScore && wScore < dScore) {
           bestScore = wScore;
         }
-        let curScore = parseFloat(bestScore) * parseFloat(list[i].freq_);
+        let curScore = parseFloat(bestScore) * 1/parseFloat(list[i].freq);
         totalScore += parseFloat(curScore);
       }
      return totalScore;
@@ -311,8 +306,8 @@ export default function App() {
     const {DirectionsService} = await google.maps.importLibrary("routes")
     const dService = new DirectionsService() //added() here idk why it worked
 
-    const origin1 = new google.maps.LatLng(xCo, yCo)
-    const destination1 = new google.maps.LatLng(xCo1, yCo1)
+    const origin1 = new google.maps.LatLng(xCo, yCo);
+    const destination1 = new google.maps.LatLng(xCo1, yCo1);
 
     const result = await dService.route({
       origin: origin1,
@@ -321,7 +316,8 @@ export default function App() {
     })
 
     let time = parseTime(result.routes[0].legs[0].duration.text)
-    return time
+    //console.log(time);
+    return time;
   }
 }
 
