@@ -106,7 +106,7 @@ export default function App() {
   );
 
 
-  async function startCalcs(data) {
+  async function startCalcs(data) { //now passes in places only and not prefs 
     let placeOne = (Place(data.coX, data.coY, data.freq));
     let placeTwo = Place(data.coX1, data.coY1, data.freq1);
     let placeThree = Place(data.coX2, data.coY2, data.freq2);
@@ -118,32 +118,43 @@ export default function App() {
     let maxY = -90;
    
     let newList = [];
-    if (placeOne.xCo_ != "" && placeOne.yCo_ != "" && placeOne.freq_ !== "") {
-      console.log('reached One');
-      newList = newList.concat(placeOne);
-    }
+
+    let i = 0;
+    while (i<data.length){
+      if (data[i].xCo_ != "" && data[i].yCo_ != "" && data[i].freq_ !== "") {
+        let placeOne = (Place(data[i].coX_, data[i].coY_, data[i].freq_));
+        newList = newList.concat(placeOne);
+        console.log('added:'+newList.lastIndex);
+        i++; //assuming each place is 1 obj
+      }}
+
+      //added places to lists
+    // if (placeOne.xCo_ != "" && placeOne.yCo_ != "" && placeOne.freq_ !== "") {
+    //   console.log('reached One');
+    //   newList = newList.concat(placeOne);
+    // }
 
 
-    if (placeTwo.xCo_ !== "" && placeTwo.yCo_ !== "" && placeTwo.freq_ !== "") {
-      console.log('reached Two');
-      newList = newList.concat(placeTwo);
-    }
-    if (placeThree.xCo_ !== "" && placeThree.yCo_ !== "" && placeThree.freq_ !== "") {
-      console.log('reached Three');
-      newList = newList.concat(placeThree);
-    }
+    // if (placeTwo.xCo_ !== "" && placeTwo.yCo_ !== "" && placeTwo.freq_ !== "") {
+    //   console.log('reached Two');
+    //   newList = newList.concat(placeTwo);
+    // }
+    // if (placeThree.xCo_ !== "" && placeThree.yCo_ !== "" && placeThree.freq_ !== "") {
+    //   console.log('reached Three');
+    //   newList = newList.concat(placeThree);
+    // }
 
 
-    if (placeFour.xCo_ !== "" && placeFour.yCo_ !== "" && placeFour.freq_ !== "") {
-      console.log('reached Four');
-      newList = newList.concat(placeFour);
-    }
+    // if (placeFour.xCo_ !== "" && placeFour.yCo_ !== "" && placeFour.freq_ !== "") {
+    //   console.log('reached Four');
+    //   newList = newList.concat(placeFour);
+    // }
 
 
-    if (placeFive.xCo_ != "" && placeFive.yCo_ !== "" && placeFive.freq_ !== "") {
-      console.log('reached Five');
-      newList = newList.concat(placeFive);
-    }
+    // if (placeFive.xCo_ != "" && placeFive.yCo_ !== "" && placeFive.freq_ !== "") {
+    //   console.log('reached Five');
+    //   newList = newList.concat(placeFive);
+    // }
    
     const list = newList;
     console.log(list);

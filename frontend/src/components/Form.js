@@ -19,28 +19,26 @@ useMapsLibrary,
 const google = window.google
 
 
-//Worst case handle api with form and save ideal location locally! & pull it down from local storage 
-
 export default function Form({data, setData}){
-  const [formData, setFormData] = useState({car: "",walk: "",bike: "",coX: "",coY: "",freq: "",coX1: "",coY1: "", freq1: "", coX2: "", coY2: "", freq2: "", coX3: "", coY3: "", freq3: "", coX4: "", coY4: "", freq4: ""});
-   //const [formData, setFormData] = useState({car: "",walk: "",transit: "",places[]});
-
-  //const [formData, setFormData] = useState({car: "",walk: "",transit: "",bike: "",coX: "",coY: "",coX1: "",coY1: "",coX2: "", coY2: ""});
+  const [prefData, setPrefData] = useState({car: "",walk: "",bike: ""});
+  // const [formData, setFormData] = useState({car: "",walk: "",bike: "",coX: "",coY: "",freq: "",coX1: "",coY1: "", freq1: "", coX2: "", coY2: "", freq2: "", coX3: "", coY3: "", freq3: "", coX4: "", coY4: "", freq4: ""});
+  
   const [LatLng, setLatLng] = useState();
   const [address, setAddress] = useState();
 
-//   const data = "This is data from Child Component to the Parent Component."
-
-
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    // setFormData((prevFormData) => ({ ...prevFormData, [name]: value }));
+    setPrefData((prevFormData) => ({ ...prevFormData, [name]: value }));
+
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(formData.coX1, formData.coY1);
-    setData(formData);
+    // setData(formData);
+    setData(prefData,places);
+    console.log(setData)
+
 };
 
 async function findLocation(data) {
@@ -50,6 +48,7 @@ async function findLocation(data) {
 
 const [places, setPlaces] = useState([
   { id: uuidv4(), xCo: "", yCo: "", freq: "" }
+  
 ]); // Initially one place
 
 
@@ -58,7 +57,6 @@ const handlePlaceChange = (index, field, value) => {
   const updatedPlaces = [...places];
   updatedPlaces[index][field] = value;
   setPlaces(updatedPlaces);
-
   //now I need to place changes to change the other handler
   
   
@@ -138,13 +136,15 @@ return (
    </button></label>
       {/* show hint when hover */}
       <label htmlFor="car">Car: <i class="fas fa-car"></i> </label>
-      <input placeholder = "0-100" type="number" id="car" name="car" value={formData.car} onChange={handleChange}/>
+      {/* <input placeholder = "0-100" type="number" id="car" name="car" value={formData.car} onChange={handleChange}/> */}
+      <input placeholder = "0-100" type="number" id="car" name="car" value={prefData.car} onChange={handleChange}/>
+
 
       <label htmlFor="bike">Bike: <i class="fas fa-bicycle"></i> </label>
-      <input placeholder = "0-100" type="number" id="bike" name="bike" value={formData.bike} onChange={handleChange}/>
+      <input placeholder = "0-100" type="number" id="bike" name="bike" value={prefData.bike} onChange={handleChange}/>
 
       <label htmlFor="walk">Walk: <i class="fas fa-walking"></i> </label>
-      <input placeholder = "0-100" type="number" id="walk" name="walk" value={formData.walk} onChange={handleChange}/>
+      <input placeholder = "0-100" type="number" id="walk" name="walk" value={prefData.walk} onChange={handleChange}/>
    </div>
 
       <div className="field1">
@@ -153,7 +153,10 @@ return (
       <button   onClick ={() =>helpAdd(data)} type="button" class="icon-button" aria-label="Help">
       <i class="fas fa-question-circle"></i>
    </button></label>
-      <textarea id="add1" placeholder="Ex: 157 Gale Lemerand Dr, Gainesville, FL 32611"  name="add1" value={formData.add1} onChange={handleChange}/>
+      {/* <textarea id="add1" placeholder="Ex: 157 Gale Lemerand Dr, Gainesville, FL 32611"  name="add1" value={formData.add1} onChange={handleChange}/> */}
+      <textarea id="add1" placeholder="Ex: 157 Gale Lemerand Dr, Gainesville, FL 32611"  name="add1" value={prefData.add1} onChange={handleChange}/>
+
+      
      
     {address ?  {'Address Found' : {address}} : '' } 
     {/* Address Found:  {address} */}
@@ -203,7 +206,7 @@ return (
           <button onClick={addLocation}>Add Another Location</button>
         
 
-  <label>Location #1</label>
+      {/* <label>Location #1</label>
       <textarea id="coX"  placeholder="Longitude"  name="coX" value={formData.coX} onChange={handleChange}/>
       <textarea id="coY"  placeholder="Latitude"  name="coY" value={formData.coY} onChange={handleChange}/>
       <textarea id="freq"  placeholder="Visit(s) per week"  name="freq" value={formData.freq} onChange={handleChange}/>
@@ -228,7 +231,7 @@ return (
       <textarea id="coX4"  placeholder="Longitude"  name="coX4" value={formData.coX4} onChange={handleChange}/>
       <textarea id="coY4"  placeholder="Latitude"  name="coY4" value={formData.coY4} onChange={handleChange}/>
       <textarea id="freq4"  placeholder="Visit(s) per week"  name="freq4" value={formData.freq4} onChange={handleChange}/>
-      </div>
+      </div> */}
       
       </div>
       <button className="button-4" type="submit">Go!</button>
