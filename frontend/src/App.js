@@ -10,16 +10,23 @@ import {
   APIProvider,
   Marker,
   Map,
+  InfoWindow
 } from "@vis.gl/react-google-maps"
 
 
 import Form from "./components/Form.js";
 
 export default function App() {
-  const [position, setPosition] = useState({lat: 51, lng: 10});
+  const [position, setPosition] = useState({lat: -16.4897, lng: -68.1193});
   const [data, setData] = useState({prefs: {}, places: []});
 
   const [map, setMap] = useState((null))
+
+  const [selectedMarker, setSelectedMarker] = useState(null);
+
+  const handleMarkerClick = (marker) => {
+    setSelectedMarker(marker);
+  };
 
   const Place = function(xCo_, yCo_, freq_) {
     let xCo = xCo_;
@@ -69,6 +76,7 @@ export default function App() {
     const google = window.google
 
   useEffect (() => {
+    console.log('reached');
     if (data.prefs && data.places.length > 1) {
       if (data.prefs.bike && data.prefs.walk && data.prefs.car) {
         console.log('You should live at');
@@ -78,15 +86,34 @@ export default function App() {
         setPosition({lat: bestX, lng:bestY});
       }
     }
-    }, [bestY])
+    }, [bestY, bestX])
 
  useEffect (() => {
    //if at least two locations in data
+   let numDefinedPlaces = 0;
+   let firstDefinedXCo;
+   let firstDefinedYCo;
+   data.places.map(item => {
+    if (item.xCo && item.yCo && item.freq) {
+      numDefinedPlaces++;
+      firstDefinedXCo = item.xCo;
+      firstDefinedYCo = item.yCo;
+    }
+   });
    console.log(data);
-    if (data.prefs && data.places.length > 1) {
+    if (data.prefs && numDefinedPlaces > 1) {
       if (data.prefs.bike && data.prefs.walk && data.prefs.car) {
         console.log('start calcs');
         startCalcs(data);
+      }
+    } else {
+      if (data.prefs) {
+
+      }
+      if (numDefinedPlaces == 1) {
+        console.log('setpos');
+        console.log(parseFloat(firstDefinedXCo));
+        setPosition({lat: parseFloat(firstDefinedXCo), lng: parseFloat(firstDefinedYCo)});
       }
     }
  }, [data])
@@ -104,7 +131,19 @@ export default function App() {
       </div>
       <div className="split right-panel " style = {{height: "95vh"} }>
         <Map zoom = {9} center = {position} onLoad={map => setMap(map)}>
-        <Marker position={position} />
+        <Marker position={position} onClick={() => handleMarkerClick(position)}/>
+        {selectedMarker && (
+          <InfoWindow
+            position={selectedMarker}
+            onCloseClick={() => setSelectedMarker(null)}
+          >
+            <div>
+              <h4>Coordinates</h4>
+              <p>Lat: {position.lat}</p>
+              <p>Lng: {position.lng}</p>
+            </div>
+          </InfoWindow>
+        )}
         </Map>
       </div>
     </APIProvider>
@@ -125,7 +164,7 @@ export default function App() {
     console.log(places.length);
     while (i<places.length){
       console.log(places[i].xCo);
-      if (places[i].xCo != "" && places[i].yCo != "" && places[i].freq !== "") {
+      if (places[i].xCo !== "" && places[i].yCo !== "" && places[i].freq !== "") {
         let placeOne = (Place(places[i].xCo, places[i].yCo, places[i].freq));
         newList = newList.concat(placeOne);
         console.log('added:'+newList.lastIndex);
