@@ -2,6 +2,8 @@
 import {createRoot} from 'react-dom/client';
 import './App.css';
 import { v4 as uuidv4 } from 'uuid';
+import { Oval } from 'react-loader-spinner';
+
 
 
 import React, {useRef, useState, useEffect} from "react";
@@ -18,6 +20,7 @@ import Form from "./components/Form.js";
 
 export default function App() {
   const [position, setPosition] = useState({lat: -16.4897, lng: -68.1193});
+  const [loading, setLoading] = useState(false);
   const [data, setData] = useState({prefs: {}, places: []});
 
   const [map, setMap] = useState((null))
@@ -84,6 +87,8 @@ export default function App() {
         console.log(bestY);
         console.log({lat: bestX, lng:bestY});
         setPosition({lat: bestX, lng:bestY});
+        setLoading(false);
+
       }
     }
     }, [bestY, bestX])
@@ -130,21 +135,34 @@ export default function App() {
         <Form data={data} setData={setData}/>
       </div>
       <div className="split right-panel " style = {{height: "95vh"} }>
-        <Map zoom = {9} center = {position} onLoad={map => setMap(map)}>
-        <Marker position={position} onClick={() => handleMarkerClick(position)}/>
-        {selectedMarker && (
-          <InfoWindow
-            position={selectedMarker}
-            onCloseClick={() => setSelectedMarker(null)}
-          >
-            <div>
-              <h4>Coordinates</h4>
-              <p>Lat: {position.lat}</p>
-              <p>Lng: {position.lng}</p>
-            </div>
-          </InfoWindow>
+      {loading ? (<Oval
+          height={80}
+          width={80}
+          color="#00BFFF"
+          visible={true}
+          ariaLabel='oval-loading'
+          secondaryColor="#4fa94d"
+          strokeWidth={2}
+          strokeWidthSecondary={2}
+        />) : (
+          <Map zoom = {9} center = {position} onLoad={map => setMap(map)}>
+          <Marker position={position} onClick={() => handleMarkerClick(position)}/>
+          {selectedMarker && (
+            <InfoWindow
+              position={selectedMarker}
+              onCloseClick={() => setSelectedMarker(null)}
+            >
+              <div>
+                <h4>Coordinates</h4>
+                <p>Lat: {position.lat}</p>
+                <p>Lng: {position.lng}</p>
+              </div>
+            </InfoWindow>
+          )}
+          </Map>
         )}
-        </Map>
+
+
       </div>
     </APIProvider>
    
@@ -152,6 +170,7 @@ export default function App() {
 
 
   async function startCalcs(data) { //now passes in places only and not prefs 
+    setLoading(true);
     let minX = 90;
     let maxX = -90;
     let minY = 90;
@@ -195,6 +214,7 @@ export default function App() {
     console.log(list);
 
     await findBestHome(minX, maxX, minY, maxY, list);
+    // setLoading(false);
   }
    
     async function findBestHome(minX, maxX, minY, maxY, list) {
@@ -355,7 +375,8 @@ export default function App() {
     })
 
     let time = parseTime(result.routes[0].legs[0].duration.text)
-    //console.log(time);
+    console.log('found this destination:' + result.routes[0]);
+
     return time;
   }
 }
