@@ -140,19 +140,20 @@ export default function App() {
       <div className="split right-panel " style = {{height: "95vh"} }>
       {loading ? (
         <div className="loader-containter">
-          <Oval
-          height={80}
-          width={80}
-          color="#00BFFF"
+        <p className = "loading-header">Loading: {progBar*2}% Complete 
+           <Oval
+          height={20}
+          width={20}
+          color="#739072"
           visible={true}
           ariaLabel='oval-loading'
-          secondaryColor="#4fa94d"
+          secondaryColor="#D6E5D5"
           strokeWidth={2}
           strokeWidthSecondary={2}
-        />
-        <p className = "button-help">Loading: {progBar*2}% Complete</p>
+        /></p>
         </div>
-        ) : (
+      ):(null)}
+        {/* // ) : ( */}
           <Map zoom = {9} center = {position} onLoad={map => setMap(map)}>
           <Marker position={position} onClick={() => handleMarkerClick(position)}/>
           {selectedMarker && (
@@ -167,7 +168,8 @@ export default function App() {
               </div>
             </InfoWindow>
           )}
-          </Map>)}
+          </Map>
+          {/* )} */}
       </div>
     </APIProvider>
    
