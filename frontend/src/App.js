@@ -225,40 +225,44 @@ export default function App() {
       let firstBestY;
       let xDiff = (parseFloat(maxX)-parseFloat(minX))/5;
       let yDiff = (parseFloat(maxY)-parseFloat(minY))/5;
-      while (it < 5) {
-        let it1 = 0;
-        while (it1 < 5) {
-          let testVal = await calculateStrength(parseFloat(minX) + it * parseFloat(xDiff), parseFloat(minY) + it1 * parseFloat(yDiff), list);
-          //console.log(testVal);
-          if (testVal < bestScore) {
-            bestScore = testVal;
-            firstBestX = parseFloat(minX) + it *(maxX-minX)/5;
-            firstBestY = parseFloat(minY) + it1 * (maxY-minY)/5;
-          }
-          it1++;
-        }
-        it++;
+      let it2 = 0;
+      while (it2 < 2) {
+        while (it < 5) {
+          let it1 = 0;
+          while (it1 < 5) {
+            let testVal = await calculateStrength(parseFloat(minX) + it * parseFloat(xDiff), parseFloat(minY) + it1 * parseFloat(yDiff), list);
+            console.log(testVal);
+            if (testVal < bestScore) {
+              bestScore = testVal;
+              firstBestX = parseFloat(minX) + it *(maxX-minX)/5;
+              firstBestY = parseFloat(minY) + it1 * (maxY-minY)/5;
+            }
+            it1++;
+         }
+         it++;
+       }
+       minX = parseFloat(firstBestX) - 0.5 * ((parseFloat(maxX)-parseFloat(minX))/5);
+       maxX = parseFloat(firstBestX) + 0.5 * ((parseFloat(maxX)-parseFloat(minX))/5);
+       minY = parseFloat(firstBestY) - 0.5 * ((parseFloat(maxY)-parseFloat(minY))/5);
+       maxY = parseFloat(firstBestY) + 0.5 * ((parseFloat(maxY)-parseFloat(minY))/5);
+       xDiff = (parseFloat(maxX)-parseFloat(minX))/5;
+       yDiff = (parseFloat(maxY)-parseFloat(minY))/5;
+       it2++;
       }
-      let newMinX = parseFloat(firstBestX) - 0.5 * ((parseFloat(maxX)-parseFloat(minX))/5);
-      let newMaxX = parseFloat(firstBestX) + 0.5 * ((parseFloat(maxX)-parseFloat(minX))/5);
-      let newMinY = parseFloat(firstBestY) - 0.5 * ((parseFloat(maxY)-parseFloat(minY))/5);
-      let newMaxY = parseFloat(firstBestY) + 0.5 * ((parseFloat(maxY)-parseFloat(minY))/5);
-      xDiff = (parseFloat(newMaxX)-parseFloat(newMinX))/5;
-      yDiff = (parseFloat(newMaxY)-parseFloat(newMinY))/5;
-      it = 0;
-      while (it < 5) {
-        let it1 = 0;
-        while (it1 < 5) {
-          let testVal = await calculateStrength(parseFloat(newMinX) + it * parseFloat(xDiff), parseFloat(newMinY) + it1 * (parseFloat(yDiff)), list);
-          if (parseFloat(testVal) < parseFloat(bestScore)) {
-            bestScore = testVal;
-            firstBestX = parseFloat(newMinX) + it * parseFloat(xDiff);
-            firstBestY = parseFloat(newMinY) + it1 * parseFloat(yDiff);
+       it = 0;
+       while (it < 5) {
+         let it1 = 0;
+         while (it1 < 5) {
+            let testVal = await calculateStrength(parseFloat(minX) + it * parseFloat(xDiff), parseFloat(minY) + it1 * (parseFloat(yDiff)), list);
+            if (parseFloat(testVal) < parseFloat(bestScore)) {
+              bestScore = testVal;
+              firstBestX = parseFloat(minX) + it * parseFloat(xDiff);
+              firstBestY = parseFloat(minY) + it1 * parseFloat(yDiff);
+            }
+            it1++;
           }
-          it1++;
+          it++;
         }
-        it++;
-      }
       console.log('set best');
       setBestX(parseFloat(firstBestX));
       setBestY(parseFloat(firstBestY));
@@ -289,7 +293,7 @@ export default function App() {
         if (wScore < bScore && wScore < dScore) {
           bestScore = wScore;
         }
-        let curScore = parseFloat(bestScore) * 1/parseFloat(list[i].freq);
+        let curScore = parseFloat(bestScore) * parseFloat(list[i].freq);
         totalScore += parseFloat(curScore);
       }
      return totalScore;
