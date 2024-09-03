@@ -150,7 +150,6 @@ return (
 
       {LatLng ?  {'Longitude & Latitude Found' : {LatLng}} : '' } 
 
-      {/* Longitude & Latitude Result: {LatLng} */}
  </div>
 
  <div className="field1">
@@ -169,13 +168,13 @@ return (
               <p>Location #{index+1}</p>
               <input
                 type="number"
-                placeholder="X Coordinate"
+                placeholder="Longitude"
                 value={place.xCo}
                 onChange={(e) => handlePlaceChange(index, "xCo", e.target.value)}
               />
               <input
                 type="number"
-                placeholder="Y Coordinate"
+                placeholder="Latitude"
                 value={place.yCo}
                 onChange={(e) => handlePlaceChange(index, "yCo", e.target.value)}
               />
@@ -187,36 +186,7 @@ return (
               />
             </div>
           ))}
-          <button onClick={addLocation}>Add Another Location</button>
-        
-
-      {/* <label>Location #1</label>
-      <textarea id="coX"  placeholder="Longitude"  name="coX" value={formData.coX} onChange={handleChange}/>
-      <textarea id="coY"  placeholder="Latitude"  name="coY" value={formData.coY} onChange={handleChange}/>
-      <textarea id="freq"  placeholder="Visit(s) per week"  name="freq" value={formData.freq} onChange={handleChange}/>
-
-      <label htmlFor="coord2">Location #2</label>
-      <textarea id="coX1"  placeholder="Longitude"  name="coX1" value={formData.coX1} onChange={handleChange}/>
-      <textarea id="coY1"  placeholder="Latitude"  name="coY1" value={formData.coY1} onChange={handleChange}/>
-      <textarea id="freq1"  placeholder="Visit(s) per week"  name="freq1" value={formData.freq1} onChange={handleChange}/>
-
-      <label htmlFor="coord3">Location #3 </label>
-      <textarea id="coX2"  placeholder="Longitude"  name="coX2" value={formData.coX2} onChange={handleChange}/>
-      <textarea id="coY2"  placeholder="Latitude"   name="coY2" value={formData.coY2} onChange={handleChange}/>
-      <textarea id="freq2"  placeholder="Visit(s) per week" name="freq2" value={formData.freq2} onChange={handleChange}/>
-
-      <label htmlFor="coord3">Location #4</label>
-      <textarea id="coX3"  placeholder="Longitude"  name="coX3" value={formData.coX3} onChange={handleChange}/>
-      <textarea id="coY3"  placeholder="Latitude"  name="coY3" value={formData.coY3} onChange={handleChange}/>
-      <textarea id="freq3"  placeholder="Visit(s) per week"  name="freq3" value={formData.freq3} onChange={handleChange}/>
-
-      <label htmlFor="coord4">Location #5</label>
-      <div>
-      <textarea id="coX4"  placeholder="Longitude"  name="coX4" value={formData.coX4} onChange={handleChange}/>
-      <textarea id="coY4"  placeholder="Latitude"  name="coY4" value={formData.coY4} onChange={handleChange}/>
-      <textarea id="freq4"  placeholder="Visit(s) per week"  name="freq4" value={formData.freq4} onChange={handleChange}/>
-      </div> */}
-      
+          <button className= "button-4" onClick={addLocation}>Add Another Location</button>
       </div>
       <button className="button-4" type="submit">Go!</button>
       <div className = "spacer"></div>

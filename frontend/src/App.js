@@ -19,10 +19,12 @@ import {
 import Form from "./components/Form.js";
 
 export default function App() {
+  const [progBar, setprogBar] = useState(0);
   const [position, setPosition] = useState({lat: -16.4897, lng: -68.1193});
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({prefs: {}, places: []});
-
+  const [calcsRun, setCalcsRun] = useState(0);
+  let progress = 0; 
   const [map, setMap] = useState((null))
 
   const [selectedMarker, setSelectedMarker] = useState(null);
@@ -88,10 +90,10 @@ export default function App() {
         console.log({lat: bestX, lng:bestY});
         setPosition({lat: bestX, lng:bestY});
         setLoading(false);
-
+        alert("We found the perfect location! You should live at: " + bestX + ", " + bestY + ". Click the pin if you forget the coordinates");
       }
     }
-    }, [bestY, bestX])
+    }, [bestY, bestX, calcsRun])
 
  useEffect (() => {
    //if at least two locations in data
@@ -110,6 +112,7 @@ export default function App() {
       if (data.prefs.bike && data.prefs.walk && data.prefs.car) {
         console.log('start calcs');
         startCalcs(data);
+        setprogBar(0);
       }
     } else {
       if (data.prefs) {
@@ -135,16 +138,21 @@ export default function App() {
         <Form data={data} setData={setData}/>
       </div>
       <div className="split right-panel " style = {{height: "95vh"} }>
-      {loading ? (<Oval
-          height={80}
-          width={80}
-          color="#00BFFF"
-          visible={true}
-          ariaLabel='oval-loading'
-          secondaryColor="#4fa94d"
-          strokeWidth={2}
-          strokeWidthSecondary={2}
-        />) : (
+      {loading ? (
+        <div className="loader-container">
+          <Oval
+            height={80}
+            width={80}
+            color="#00BFFF"
+            visible={true}
+            ariaLabel='oval-loading'
+            secondaryColor="#4fa94d"
+            strokeWidth={2}
+            strokeWidthSecondary={2}
+          />
+          <p className = "button-help">Loading: {progBar*2}% Complete</p>
+          </div>
+          ) : (
           <Map zoom = {9} center = {position} onLoad={map => setMap(map)}>
           <Marker position={position} onClick={() => handleMarkerClick(position)}/>
           {selectedMarker && (
@@ -230,7 +238,7 @@ export default function App() {
         while (it < 5) {
           let it1 = 0;
           while (it1 < 5) {
-            let testVal = await calculateStrength(parseFloat(minX) + it * parseFloat(xDiff), parseFloat(minY) + it1 * parseFloat(yDiff), list);
+            let testVal = await calculateStrength(parseFloat(minX) + it * parseFloat(xDiff), parseFloat(minY) + it1 * parseFloat(yDiff), list, progress);
             console.log(testVal);
             if (testVal < bestScore) {
               bestScore = testVal;
@@ -253,7 +261,7 @@ export default function App() {
        while (it < 5) {
          let it1 = 0;
          while (it1 < 5) {
-            let testVal = await calculateStrength(parseFloat(minX) + it * parseFloat(xDiff), parseFloat(minY) + it1 * (parseFloat(yDiff)), list);
+            let testVal = await calculateStrength(parseFloat(minX) + it * parseFloat(xDiff), parseFloat(minY) + it1 * (parseFloat(yDiff)), list, progress);
             if (parseFloat(testVal) < parseFloat(bestScore)) {
               bestScore = testVal;
               firstBestX = parseFloat(minX) + it * parseFloat(xDiff);
@@ -266,11 +274,27 @@ export default function App() {
       console.log('set best');
       setBestX(parseFloat(firstBestX));
       setBestY(parseFloat(firstBestY));
+      setCalcsRun(parseFloat(calcsRun+1));
       console.log(firstBestX);
+      console.log(firstBestY);
     }
 
-    async function calculateStrength(xCo, yCo, list) {
+    async function calculateStrength(xCo, yCo, list, progress_) {
       console.log("calcStrength");
+      console.log(progBar);
+      if (progBar >= 80) {
+        setprogBar(0);
+        console.log("progbar reset");
+        progress_ = 0;
+      } 
+      
+      let newProg = progBar + 1; 
+      setprogBar(newProg);
+      console.log(progBar);
+      progress = ++progress_;
+      console.log(progress);
+      setprogBar(progress);
+
       let bikePref = data.prefs.bike;
       let walkPref = data.prefs.walk;
       let drivingPref = data.prefs.car;
