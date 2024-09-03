@@ -290,5 +290,13 @@ icon-button:hover {
   transition-duration: 0.1s;
 } */
 
+.loader-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh; /* Takes the full height of the viewport */
+}
+
+
 
 /* color palette https://colorhunt.co/palette/ece3ce7390724f6f523a4d39 */

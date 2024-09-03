@@ -18,10 +18,11 @@ import {
 import Form from "./components/Form.js";
 
 export default function App() {
+  const [progBar, setprogBar] = useState(0);
   const [loading, setLoading] = useState(false);
   const [position, setPosition] = useState({lat: 51, lng: 10});
   const [data, setData] = useState({prefs: {}, places: []});
-
+  let progress = 0; 
   const [map, setMap] = useState((null))
 
   const Place = function(xCo_, yCo_, freq_) {
@@ -80,7 +81,7 @@ export default function App() {
         console.log({lat: bestX, lng:bestY});
         setPosition({lat: bestX, lng:bestY});
         setLoading(false);
-
+        alert("We found the perfect location! You should live at: " + bestX + ", " + bestY + ".");
       }
     }
     }, [bestY])
@@ -92,6 +93,8 @@ export default function App() {
       if (data.prefs.bike && data.prefs.walk && data.prefs.car) {
         console.log('start calcs');
         startCalcs(data);
+        setprogBar(0);
+
       }
     }
  }, [data])
@@ -108,7 +111,9 @@ export default function App() {
         <Form data={data} setData={setData}/>
       </div>
       <div className="split right-panel " style = {{height: "95vh"} }>
-      {loading ? (<Oval
+      {loading ? (
+        <div className="loader-containter">
+          <Oval
           height={80}
           width={80}
           color="#00BFFF"
@@ -117,7 +122,10 @@ export default function App() {
           secondaryColor="#4fa94d"
           strokeWidth={2}
           strokeWidthSecondary={2}
-        />) : (
+        />
+        <p className = "button-help">Loading: {progBar*2}% Complete</p>
+        </div>
+        ) : (
            <Map zoom = {9} center = {position} onLoad={map => setMap(map)}>
         <Marker position={position} />
         </Map>
@@ -189,7 +197,7 @@ export default function App() {
       while (it < 5) {
         let it1 = 0;
         while (it1 < 5) {
-          let testVal = await calculateStrength(parseFloat(minX) + it * parseFloat(xDiff), parseFloat(minY) + it1 * parseFloat(yDiff), list);
+          let testVal = await calculateStrength(parseFloat(minX) + it * parseFloat(xDiff), parseFloat(minY) + it1 * parseFloat(yDiff), list, progress);
           //console.log(testVal);
           if (testVal < bestScore) {
             bestScore = testVal;
@@ -210,7 +218,7 @@ export default function App() {
       while (it < 5) {
         let it1 = 0;
         while (it1 < 5) {
-          let testVal = await calculateStrength(parseFloat(newMinX) + it * parseFloat(xDiff), parseFloat(newMinY) + it1 * (parseFloat(yDiff)), list);
+          let testVal = await calculateStrength(parseFloat(newMinX) + it * parseFloat(xDiff), parseFloat(newMinY) + it1 * (parseFloat(yDiff)), list, progress);
           if (parseFloat(testVal) < parseFloat(bestScore)) {
             bestScore = testVal;
             firstBestX = parseFloat(newMinX) + it * parseFloat(xDiff);
@@ -226,8 +234,22 @@ export default function App() {
       console.log(firstBestX);
     }
 
-    async function calculateStrength(xCo, yCo, list) {
+    async function calculateStrength(xCo, yCo, list, progress_) {
       console.log("calcStrength");
+    
+      if (progBar >= 49) {
+        setprogBar(0);
+        console.log("progbar reset");
+        progress_ = 0;
+      } 
+      
+      let newProg = progBar + 1; 
+      setprogBar(newProg);
+      console.log(progBar);
+      progress = ++progress_;
+      console.log(progress);
+      setprogBar(progress);
+      
       let bikePref = data.prefs.bike;
       let walkPref = data.prefs.walk;
       let drivingPref = data.prefs.car;
