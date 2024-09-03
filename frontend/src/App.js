@@ -19,11 +19,8 @@ import {
 import Form from "./components/Form.js";
 
 export default function App() {
-<<<<<<< HEAD
   const [progBar, setprogBar] = useState(0);
-=======
   const [position, setPosition] = useState({lat: -16.4897, lng: -68.1193});
->>>>>>> 85706cef148022c5afbad1dfc5e8365afaa21631
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState({prefs: {}, places: []});
   let progress = 0; 
@@ -92,7 +89,7 @@ export default function App() {
         console.log({lat: bestX, lng:bestY});
         setPosition({lat: bestX, lng:bestY});
         setLoading(false);
-        alert("We found the perfect location! You should live at: " + bestX + ", " + bestY + ".");
+        alert("We found the perfect location! You should live at: " + bestX + ", " + bestY + ". Click the pin if you forget the coordinates");
       }
     }
     }, [bestY, bestX])
@@ -152,16 +149,10 @@ export default function App() {
           secondaryColor="#4fa94d"
           strokeWidth={2}
           strokeWidthSecondary={2}
-<<<<<<< HEAD
         />
         <p className = "button-help">Loading: {progBar*2}% Complete</p>
         </div>
         ) : (
-           <Map zoom = {9} center = {position} onLoad={map => setMap(map)}>
-        <Marker position={position} />
-        </Map>
-=======
-        />) : (
           <Map zoom = {9} center = {position} onLoad={map => setMap(map)}>
           <Marker position={position} onClick={() => handleMarkerClick(position)}/>
           {selectedMarker && (
@@ -176,11 +167,7 @@ export default function App() {
               </div>
             </InfoWindow>
           )}
-          </Map>
->>>>>>> 85706cef148022c5afbad1dfc5e8365afaa21631
-        )}
-
-
+          </Map>)}
       </div>
     </APIProvider>
    
